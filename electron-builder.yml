@@ -1,0 +1,26 @@
+appId: com.sachaos.desktop
+productName: SA-CHAOS
+directories:
+  output: dist
+  buildResources: build
+files:
+  - from: obfuscated-main
+    to: main
+  - renderer/**/*
+  - data/**/*
+  - favicon/**/*
+  - package.json
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  icon: favicon/android-chrome-512x512.png
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+
+npmRebuild: false

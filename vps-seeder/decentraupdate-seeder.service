@@ -1,0 +1,34 @@
+[Unit]
+Description=DecentraUpdate Hybrid P2P Seeder Daemon (SA-CHAOS Dual-Stack IPv6/IPv4)
+Documentation=https://updater.sa-chaos.my.id
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=decentraupdate
+Group=decentraupdate
+WorkingDirectory=/opt/decentraupdate
+Environment="NODE_ENV=production"
+Environment="DECENTRAUPDATE_CONFIG=/etc/decentraupdate/config.json"
+ExecStart=/usr/bin/node /opt/decentraupdate/vps-seeder/seeder-daemon.js /etc/decentraupdate/config.json
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+
+# Security Hardening (Non-Root, Read-Only Releases, Isolated System)
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadOnlyPaths=/opt/decentraupdate /etc/decentraupdate /var/lib/decentraupdate/releases
+ReadWritePaths=/var/lib/decentraupdate/state
+LimitNOFILE=8192
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

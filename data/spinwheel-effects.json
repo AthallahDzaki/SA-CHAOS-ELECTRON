@@ -1,0 +1,20 @@
+{
+    "effects": [
+        {
+            "id": "aggressive_drivers",
+            "name": "Aggressive Drivers"
+        },
+        {
+            "id": "everyone_armed",
+            "name": "Everyone Armed"
+        },
+        {
+            "id": "explode_all_cars",
+            "name": "Explode All Vehicles"
+        },
+        {
+            "id": "mega_jump",
+            "name": "Mega Jump"
+        }
+    ]
+}

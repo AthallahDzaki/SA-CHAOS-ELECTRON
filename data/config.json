@@ -1,0 +1,38 @@
+{
+    "General": {
+        "GUIWebsocketPort": 42069,
+        "EffectDuration": 30000,
+        "Seed": 0,
+        "Cooldown": 5000,
+        "GTA_PATH": "C:\\Program Files (x86)\\GTAind Naufal\\GTA Clean Indonesia v1",
+        "MinimizeToTray": false,
+        "VerboseLog": true
+    },
+    "Tiktok": {
+        "TiktokEnable": true,
+        "TikfinityEnable": true,
+        "TikfinityHTTPServer": false,
+        "TiktokUseBuiltInChaos": false,
+        "TiktokVoteEnable": false,
+        "TiktokForceEffect": true,
+        "TiktokUseIndofinity": true,
+        "TiktokUsername": "",
+        "TiktokSessionId": "",
+        "TiktokVoteCooldown": 30000
+    },
+    "EffectForceEffect": {
+        "ForceSpecificEffect": false,
+        "EffectName": ""
+    },
+    "EffectForceCategory": {
+        "ForceSpecificCategory": false,
+        "CategoryName": "Teleportation"
+    },
+    "ComboEffect": {
+        "BetaEnabled": false,
+        "ChainDelayMs": 350,
+        "MaxComboLength": 5,
+        "DeduplicateMs": 1200
+    },
+    "RapidFire": {}
+}

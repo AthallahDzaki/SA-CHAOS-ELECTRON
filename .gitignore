@@ -1,0 +1,85 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Build & Distribution Artifacts (Electron, Velopack, Obfuscator)
+/dist/
+/obfuscated-main/
+/Releases/
+/build/
+/out/
+*.exe
+*.nupkg
+*.msi
+*.zip
+*.tgz
+
+# Security, Private Keys & Certificates
+*.pem
+*.key
+*.pfx
+*.pkcs12
+*.cer
+*.crt
+# Kecualikan public key agar tetap bisa dilacak jika diperlukan verifikasi
+!keys/*public*.pem
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Runtime, Caches & Temporary Files
+data/effects.cache.json
+*.cache
+*.cache.json
+pids/
+*.pid
+*.seed
+*.pid.lock
+.eslintcache
+.node_repl_history
+
+# Backup & Old Files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Local configurations
+vps-seeder/config.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE / Editor Settings
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

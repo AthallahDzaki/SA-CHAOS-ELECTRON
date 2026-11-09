@@ -1,0 +1,15 @@
+{
+  "listenPort": 4001,
+  "bindIpv6": "::",
+  "bindIpv4": "0.0.0.0",
+  "publicIpv6": "<GANTI_DENGAN_GLOBAL_IPV6_VPS_ANDA>",
+  "publicIpv4": "<GANTI_DENGAN_PUBLIC_IPV4_VPS_ANDA>",
+  "releasesDir": "/var/lib/decentraupdate/releases",
+  "stateDir": "/var/lib/decentraupdate/state",
+  "maxConcurrentPeers": 32,
+  "maxUploadKBps": 20480,
+  "maxCacheMB": 2048,
+  "appId": "SA-CHAOS",
+  "channel": "win",
+  "arch": "x64"
+}

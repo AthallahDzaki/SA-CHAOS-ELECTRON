@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "enabled": false,
+    "cooldown": 30000,
+    "chatVotePoints": 1,
+    "allowRepeatGifts": true,
+    "multiplyByStreak": true
+  },
+  "giftPoints": [
+    {
+      "giftId": 5655,
+      "giftName": "Rose",
+      "target": "1",
+      "points": 5,
+      "multiplyByCount": true
+    },
+    {
+      "giftId": 5333,
+      "giftName": "Coffee",
+      "target": "2",
+      "points": 5,
+      "multiplyByCount": true
+    },
+    {
+      "giftId": 6064,
+      "giftName": "GG",
+      "target": "3",
+      "points": 5,
+      "multiplyByCount": true
+    }
+  ]
+}

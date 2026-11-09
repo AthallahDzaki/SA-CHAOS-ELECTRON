@@ -1,0 +1,3064 @@
+{
+    "Function": [
+        {
+            "category": "Special",
+            "name": "Immune",
+            "description": "Immune",
+            "id": "immune",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Aggressive Drivers",
+            "description": "AllDriversAreCriminals",
+            "id": "aggressive_drivers",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Elvis Is Everywhere",
+            "description": "BlueSuedeShoes",
+            "id": "elvis_is_everywhere",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Everyone Armed",
+            "description": "SurroundedByNutters",
+            "id": "everyone_armed",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Gang Members Everywhere",
+            "description": "OnlyHomiesAllowed",
+            "id": "gang_members_everywhere",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Gangs Control The Streets",
+            "description": "BetterStayIndoors",
+            "id": "gangs_control_the_streets",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Ghost Town",
+            "description": "GhostTown",
+            "id": "ghost_town",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "NPCs Attack Each Other",
+            "description": "RoughNeighbourhood",
+            "id": "npcs_attack_each_other",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "NPCs Attack You",
+            "description": "AttackOfTheVillagePeople",
+            "id": "npcs_attack_you",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (9mm)",
+            "description": "WannaBeInMyGang",
+            "id": "recruit_anyone_9mm",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (DE)",
+            "description": "DEGangster",
+            "id": "recruit_anyone_desert_eagle",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (SPAS)",
+            "description": "SPASGang",
+            "id": "recruit_anyone_super_shotgun",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (Minigun)",
+            "description": "OverPowerGang",
+            "id": "recruit_anyone_minigun",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (Spray Tag)",
+            "description": "ValdalismEverywhere",
+            "id": "recruit_anyone_spray",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (AK-47)",
+            "description": "NoOneCanStopUs",
+            "id": "recruit_anyone_ak47",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Recruit Anyone (Rockets)",
+            "description": "RocketMayhem",
+            "id": "recruit_anyone_rockets",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Riot Mode",
+            "description": "StateOfEmergency",
+            "id": "riot_mode",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Beach Party",
+            "description": "LifesABeach",
+            "id": "beach_theme",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Country Traffic",
+            "description": "HicksVille",
+            "id": "country_traffic",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Funhouse Theme",
+            "description": "CrazyTown",
+            "id": "funhouse_theme",
+            "exclusive": false
+        },
+        {
+            "category": "NPCs",
+            "name": "Ninja Theme",
+            "description": "NinjaTown",
+            "id": "ninja_theme",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Auto Collect Pickup",
+            "description": "AutoCollect.asi",
+            "id": "auto_collect_pickups",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Cough Player",
+            "description": "ICantStopCoughing",
+            "id": "cough_player",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Eveyone Has Covid19",
+            "description": "Covid19",
+            "id": "cough_everyone",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Death",
+            "description": "GoodbyeCruelWorld",
+            "id": "death",
+            "exclusive": true
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Health, Armor, $250k",
+            "description": "INeedSomeHelp",
+            "id": "health_armor_money",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Infinite Ammo",
+            "description": "FullClip",
+            "id": "infinite_ammo",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Invincible (Player)",
+            "description": "NoOneCanHurtMe",
+            "id": "infinite_health_player",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Weapon Set 1",
+            "description": "ThugsArmoury",
+            "id": "weapon_set_1",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Weapon Set 2",
+            "description": "ProfessionalsKit",
+            "id": "weapon_set_2",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Weapon Set 3",
+            "description": "NuttersToys",
+            "id": "weapon_set_3",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Weapon Set 4",
+            "description": "MinigunMadness",
+            "id": "weapon_set_4",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give AK-47",
+            "description": "GiveAK47",
+            "id": "give_ak47",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Uzi",
+            "description": "GiveUZI",
+            "id": "give_uzi",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Sniper",
+            "description": "GiveSniper",
+            "id": "give_sniper",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Shotgun",
+            "description": "GiveShotgun",
+            "id": "give_shotgun",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Rocket Launcher",
+            "description": "GiveRocketLauncher",
+            "id": "give_rocket_launcher",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Pistol",
+            "description": "GivePistol",
+            "id": "give_pistol",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Minigun",
+            "description": "GiveMinigun",
+            "id": "give_minigun",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Grenades",
+            "description": "GiveGrenades",
+            "id": "give_grenades",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Give Chainsaw",
+            "description": "GiveChainsaw",
+            "id": "give_chainsaw",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Get Parachute",
+            "description": "GiveParachute",
+            "id": "get_parachute",
+            "exclusive": false
+        },
+        {
+            "category": "WeaponsAndHealth",
+            "name": "Spawn Rocket",
+            "description": "SpawnRocket",
+            "id": "spawn_rocket",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Beginner Weapon Skills",
+            "description": "BabysFirstGun",
+            "id": "beginner_level_for_all_weapons",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Fat Player",
+            "description": "WhoAteAllThePies",
+            "id": "fat_player",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Hitman Weapon Skills",
+            "description": "ProfessionalKiller",
+            "id": "hitman_level_for_all_weapons",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Hot CJ In Your Area",
+            "description": "HelloLadies",
+            "id": "lock_sex_appeal_at_max",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Lock Respect At Max",
+            "description": "WorshipMe",
+            "id": "lock_respect_at_max",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Max Driving Skills",
+            "description": "NaturalTalent",
+            "id": "max_driving_skills",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Max Lung Capacity",
+            "description": "FilledLungs",
+            "id": "max_lung_capacity",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Max Muscle",
+            "description": "BuffMeUp",
+            "id": "max_muscle",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Max Stamina",
+            "description": "ICanGoAllNight",
+            "id": "max_stamina",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Never Get Hungry",
+            "description": "IAmNeverHungry",
+            "id": "never_get_hungry",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "No Driving Skills",
+            "description": "BackToDrivingSchool",
+            "id": "no_driving_skills",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "No Lung Capacity",
+            "description": "EmptyLungs",
+            "id": "no_lung_capacity",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "No Stamina",
+            "description": "ImAllOutOfBreath",
+            "id": "no_stamina",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Skinny Player",
+            "description": "LeanAndMean",
+            "id": "skinny_player",
+            "exclusive": false
+        },
+        {
+            "category": "Stats",
+            "name": "Buff Player",
+            "description": "BigBro",
+            "id": "buff_player",
+            "exclusive": false
+        },
+        {
+            "category": "WantedLevel",
+            "name": "+2 Wanted Stars",
+            "description": "TurnUpTheHeat",
+            "id": "wanted_level_plus_two",
+            "exclusive": false
+        },
+        {
+            "category": "WantedLevel",
+            "name": "Clear Wanted Level",
+            "description": "TurnDownTheHeat",
+            "id": "clear_wanted_level",
+            "exclusive": false
+        },
+        {
+            "category": "WantedLevel",
+            "name": "Never Wanted",
+            "description": "IDoAsIPlease",
+            "id": "never_wanted",
+            "exclusive": false
+        },
+        {
+            "category": "WantedLevel",
+            "name": "Six Wanted Stars",
+            "description": "BringItOn",
+            "id": "wanted_level_six_stars",
+            "exclusive": true
+        },
+        {
+            "category": "Weather",
+            "name": "Foggy Weather",
+            "description": "CantSeeWhereImGoing",
+            "id": "9"
+        },
+        {
+            "category": "Weather",
+            "name": "Overcast Weather",
+            "description": "DullDullDay",
+            "id": "4"
+        },
+        {
+            "category": "Weather",
+            "name": "Rainy Weather",
+            "description": "StayInAndWatchTV",
+            "id": "16"
+        },
+        {
+            "category": "Weather",
+            "name": "Sandstorm",
+            "description": "SandInMyEars",
+            "id": "19"
+        },
+        {
+            "category": "Weather",
+            "name": "Sunny Weather",
+            "description": "PleasantlyWarm",
+            "id": "1"
+        },
+        {
+            "category": "Weather",
+            "name": "Very Sunny Weather",
+            "description": "TooDamnHot",
+            "id": "0"
+        },
+        {
+            "category": "Spawning",
+            "name": "Get Jetpack",
+            "description": "Rocketman",
+            "id": "get_jetpack",
+            "exclusive": false
+        },
+        {
+            "category": "Spawning",
+            "name": "Get Parachute",
+            "description": "LetsGoBaseJumping",
+            "id": "get_parachute",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "OldSpeedDemon",
+            "description": "OldSpeedDemon",
+            "id": "504",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "18Holes",
+            "description": "18Holes",
+            "id": "457",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "ItsAllBull",
+            "description": "ItsAllBull",
+            "id": "486",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "NotForPublicRoads",
+            "id": "502"
+        },
+        {
+            "category": "Vehicle",
+            "name": "JustTryAndStopMe",
+            "description": "JustTryAndStopMe",
+            "id": "503",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "OhDude",
+            "description": "OhDude",
+            "id": "425",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "JumpJet",
+            "description": "JumpJet",
+            "id": "520",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "MonsterMash",
+            "description": "MonsterMash",
+            "id": "556",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "EnergyFiveHundred",
+            "description": "EnergyFiveHundred",
+            "id": "522",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "FourWheelFun",
+            "description": "FourWheelFun",
+            "id": "471",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "DoughnutHandicap",
+            "description": "DoughnutHandicap",
+            "id": "489",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "SurpriseDriver",
+            "description": "SurpriseDriver",
+            "id": "-1",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "GiveMeBobcatPlease",
+            "description": "GiveMeBobcatPlease",
+            "id": "422",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "TimeToKickAss",
+            "description": "TimeToKickAss",
+            "id": "432",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "WheresTheFuneral",
+            "description": "WheresTheFuneral",
+            "id": "442",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "CelebrityStatus",
+            "description": "CelebrityStatus",
+            "id": "409",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "FlyingToStunt",
+            "description": "FlyingToStunt",
+            "id": "513",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "TrueGrime",
+            "description": "TrueGrime",
+            "id": "408",
+            "exclusive": false
+        },
+        {
+            "category": "Vehicle",
+            "name": "IWantToHover",
+            "description": "IWantToHover",
+            "id": "539",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "0.25x Game Speed",
+            "description": "MatrixMode",
+            "id": "quarter_game_speed",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "0.5x Game Speed",
+            "description": "SlowItDown",
+            "id": "half_game_speed",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "2x Game Speed",
+            "description": "SpeedItUp",
+            "id": "double_game_speed",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "4x Game Speed",
+            "description": "YoureTooSlow",
+            "id": "quadruple_game_speed",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "Always Midnight",
+            "description": "NightProwler",
+            "id": "always_midnight",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "Faster Clock",
+            "description": "TimeJustFliesBy",
+            "id": "faster_clock",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "Stop Game Clock",
+            "description": "DontBringOnTheNight",
+            "id": "stop_game_clock",
+            "exclusive": false
+        },
+        {
+            "category": "Time",
+            "name": "Timelapse Mode",
+            "description": "DiscoInTheSky",
+            "id": "timelapse",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "All Cars Have Nitro",
+            "description": "SpeedFreak",
+            "id": "all_cars_have_nitro",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "All Green Lights",
+            "description": "DontTryAndStopMe",
+            "id": "all_green_lights",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "All Taxis Have Nitrous",
+            "description": "SpeedyTaxis",
+            "id": "all_taxis_have_nitro",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Black Vehicles",
+            "description": "SoLongAsItsBlack",
+            "id": "black_traffic",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Boats Fly",
+            "description": "FlyingFish",
+            "id": "boats_fly",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Cars Float Away When Hit",
+            "description": "BubbleCars",
+            "id": "cars_float_away_when_hit",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Cars Fly",
+            "description": "ChittyChittyBangBang",
+            "id": "cars_fly",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Cars On Water",
+            "description": "JesusTakeTheWheel",
+            "id": "cars_on_water",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Cheap Cars",
+            "description": "EveryoneIsPoor",
+            "id": "cheap_cars",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Expensive Cars",
+            "description": "EveryoneIsRich",
+            "id": "expensive_cars",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Explode All Vehicles",
+            "description": "AllCarsGoBoom",
+            "id": "explode_all_cars",
+            "exclusive": true
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Insane Handling",
+            "description": "StickLikeGlue",
+            "id": "insane_handling",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Pink Vehicles",
+            "description": "PinkIsTheNewCool",
+            "id": "pink_traffic",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Smash N' Boom",
+            "description": "TouchMyCarYouDie",
+            "id": "smash_n_boom",
+            "exclusive": false
+        },
+        {
+            "category": "VehiclesTraffic",
+            "name": "Wheels Only, Please",
+            "description": "WheelsOnlyPlease",
+            "id": "wheels_only_please",
+            "exclusive": false
+        },
+        {
+            "category": "PlayerModifications",
+            "name": "Drive-By Aiming",
+            "description": "IWannaDriveBy",
+            "id": "weapon_aiming_while_driving",
+            "exclusive": false
+        },
+        {
+            "category": "PlayerModifications",
+            "name": "Infinite Oxygen",
+            "description": "ManFromAtlantis",
+            "id": "infinite_oxygen",
+            "exclusive": false
+        },
+        {
+            "category": "PlayerModifications",
+            "name": "Huge Bunny Hop",
+            "description": "CJPhoneHome",
+            "id": "huge_bunny_hop",
+            "exclusive": false
+        },
+        {
+            "category": "PlayerModifications",
+            "name": "Mega Jump",
+            "description": "Kangaroo",
+            "id": "mega_jump",
+            "exclusive": false
+        },
+        {
+            "category": "PlayerModifications",
+            "name": "Mega Punch",
+            "description": "StingLikeABee",
+            "id": "mega_punch",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "0.5x Effect Speed",
+            "description": "LetsDragThisOutABit",
+            "id": "half_timer_speed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "2x Effect Speed",
+            "description": "LetsDoThisABitFaster",
+            "id": "double_timer_speed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "5x Effect Speed",
+            "description": "LetsDoThisReallyFast",
+            "id": "quintuple_timer_speed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Clear Active Effects",
+            "description": "ClearActiveEffects",
+            "id": "clear_active_effects",
+            "exclusive": false
+        },
+        {
+            "category": "RapidFire",
+            "name": "LIDL Rapid-Fire",
+            "description": "SystemError",
+            "id": "discount_rapid_fire"
+        },
+        {
+            "category": "RapidFire",
+            "name": "Hyper Rapid-Fire",
+            "description": "SystemCrash",
+            "id": "hyper_rapid_fire"
+        },
+        {
+            "category": "RapidFire",
+            "name": "Rapid-Fire",
+            "description": "SystemOverload",
+            "id": "rapid_fire"
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Hide Chaos UI",
+            "description": "AsIfNothingEverHappened",
+            "id": "hide_chaos_ui",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Reset Effect Timers",
+            "description": "HistoryRepeatsItself",
+            "id": "reset_effect_timers",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Backwards Clock",
+            "description": "TimeJustGoesBackwards",
+            "id": "backwards_clock",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Buttsbot",
+            "description": "ButtsbotYes",
+            "id": "buttsbot",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Custom Textures",
+            "description": "CustomTextures",
+            "id": "textures_custom",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Deforestation",
+            "description": "Deforestation",
+            "id": "deforestation",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Delayed Controls",
+            "description": "WhatsWrongWithThisKeyboard",
+            "id": "delayed_controls",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "EASY TO READ",
+            "description": "ItsEasierToRead",
+            "id": "very_big_font_scale",
+            "exclusive": false
+        },
+        {
+            "category": "Crash",
+            "name": "Game Crash",
+            "description": "TooManyModsInstalled"
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Get To The Marker!",
+            "description": "GetToTheMarker",
+            "id": "get_to_marker",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "haha funni font",
+            "description": "ComicSansMasterRace",
+            "id": "font_comic_sans",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Where is Cop Go?",
+            "description": "WhereIsCopGo",
+            "id": "invisible_cops",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Invisible Fire",
+            "description": "InvisibleFire",
+            "id": "invisible_fire",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "It's Morbin Time",
+            "description": "ItsMorbinTime",
+            "id": "textures_its_morbin_time",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "KIRYU-CHAN!!!",
+            "description": "KiryuChan",
+            "id": "font_yakuza",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Low LOD Vehicles",
+            "description": "AtariVehicles",
+            "id": "low_lod_vehicles",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Mirrored Screen",
+            "description": "WhatsLeftIsRight",
+            "id": "mirrored_screen",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Mirrored World",
+            "description": "LetsTalkAboutParallelUniverses",
+            "id": "mirrored_world",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Draw Distance 0.1 Meter",
+            "description": "LowDrawDistance",
+            "id": "low_draw_distance",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Night Vision",
+            "description": "NightVision",
+            "id": "night_vision",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Nothing",
+            "description": "ThereIsNoEffect",
+            "id": "nothing",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "No Visible Water",
+            "description": "OceanManGoneAgain",
+            "id": "no_visible_water",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "No Water Physics",
+            "description": "FastTrackToAtlantis",
+            "id": "no_water_physics",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "One Hit K.O. (Player)",
+            "description": "ILikeToLiveDangerously",
+            "id": "one_hit_ko",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Pausing",
+            "description": "LetsPause",
+            "id": "pausing",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Quick Sprunk Stop",
+            "description": "ARefreshingDrink",
+            "id": "quick_sprunk_stop",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Random Inputs",
+            "description": "PossessedKeyboard",
+            "id": "random_inputs",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Radar Zoom (Small)",
+            "description": "SmallRadarZoom",
+            "id": "radar_zoom_small",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Radar Zoom (Large)",
+            "description": "LargeRadarZoom",
+            "id": "radar_zoom_large",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Random Stunt Jump",
+            "description": "RandomStuntJump",
+            "id": "random_stunt_jump",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Reload Autosave",
+            "description": "HereWeGoAgain",
+            "id": "reload_autosave",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Roll Credits",
+            "description": "WaitItsOver",
+            "id": "roll_credits",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Did you have a car in your garage?",
+            "description": "DidYouHaveACarInYourGarage",
+            "id": "clear_all_garages",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "All Garage has Stuck",
+            "description": "AllGarageHasStuck",
+            "id": "lock_all_garages",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Screensaver HUD",
+            "description": "ScreensaverHUD",
+            "id": "screensaver_hud",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Replace All Text",
+            "description": "ReplaceAllText",
+            "id": "replace_all_text",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Spawn Ramp",
+            "description": "FreeStuntJump",
+            "id": "spawn_ramp",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Super Smokio 64",
+            "description": "SuperSmokio64",
+            "id": "font_mario_64",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "TABLE!",
+            "description": "TABLE",
+            "id": "spawn_table",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Team Trees",
+            "description": "TeamTrees",
+            "id": "spawn_tree",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Di Antara ku Dan Sawit",
+            "description": "SAWITTIME",
+            "id": "effect_palm_tree",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "The Mirror Dimension",
+            "description": "ThisSeemsStrange",
+            "id": "the_mirror_dimension",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Thermal Vision",
+            "description": "ThermalVision",
+            "id": "thermal_vision",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Too Much Information",
+            "description": "TooMuchInformation",
+            "id": "too_much_information",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Underwater View",
+            "description": "HelloHowAreYouIAmUnderTheWater",
+            "id": "underwater_view",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Uninstall CS: Source",
+            "description": "UninstallCSS",
+            "id": "textures_counter_strike_source",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Frankenste In Here",
+            "description": "FrankensteinHere",
+            "id": "texture_frankenstein",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "WDG Has Been Here",
+            "description": "WDGHasBeenHere",
+            "id": "texture_wdg",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Dino Andrean..... Rawrrrr",
+            "description": "DinoAndreanRawrrrr",
+            "id": "texture_dinoandrean",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "ZNine, The f.ck, who is that?",
+            "description": "ZNineNiBoss",
+            "id": "texture_znine",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Upside-Down Screen",
+            "description": "WhatsUpIsDown",
+            "id": "upside_down_screen",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "I Can't Respray My Car",
+            "description": "ICantResprayMyCar",
+            "id": "disable_pay_n_spray",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Generic",
+            "name": "Vehicle Bullets",
+            "description": "ImShootingCars",
+            "id": "vehicle_bullets",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Audio",
+            "name": "High Pitched Audio",
+            "description": "CJAndTheChipmunks",
+            "id": "high_pitched_audio",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Audio",
+            "name": "Pitch Shifter",
+            "description": "VocalRange",
+            "id": "pitch_shifter",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Forceful Explosion",
+            "description": "ExplosivePersonality",
+            "id": "forceful_explosions",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Double Gravity",
+            "description": "KilogramOfFeathers",
+            "id": "double_gravity",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Half Gravity",
+            "description": "ImFeelingLightheaded",
+            "id": "half_gravity",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Insane Gravity",
+            "description": "StraightToHell",
+            "id": "insane_gravity",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Inverted Gravity",
+            "description": "BeamMeUpScotty",
+            "id": "inverted_gravity",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Quadruple Gravity",
+            "description": "KilogramOfSteel",
+            "id": "quadruple_gravity",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Quarter Gravity",
+            "description": "GroundControlToMajorTom",
+            "id": "quarter_gravity",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Zero Gravity",
+            "description": "ImInSpaaaaace",
+            "id": "zero_gravity",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Gravity",
+            "name": "Sideway Gravity",
+            "description": "SidewayGravity",
+            "id": "sideway_gravity",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "Blind",
+            "description": "WhoTurnedTheLightsOff",
+            "id": "blind",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "Disable HUD",
+            "description": "FullyImmersed",
+            "id": "disable_hud",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "DVD Screensaver",
+            "description": "ItsGonnaHitTheCorner",
+            "id": "dvd_screensaver",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "Freeze Radar",
+            "description": "OutdatedMaps",
+            "id": "freeze_radar",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "No Blips/Markers/Pickups",
+            "description": "INeedSomeInstructions",
+            "id": "disable_blips_markers_pickups",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "Portrait Mode",
+            "description": "PortraitMode",
+            "id": "portrait_mode",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "Scott The Woz",
+            "description": "HeyYallScottHere",
+            "id": "scott_the_woz",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_HUD",
+            "name": "Tunnel Vision",
+            "description": "TunnelVision",
+            "id": "tunnel_vision",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Mission",
+            "name": "Fail Current Mission",
+            "description": "MissionFailed",
+            "id": "fail_current_mission",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Mission",
+            "name": "Pass Current Mission",
+            "description": "IllTakeAFreePass",
+            "id": "pass_current_mission",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Mission",
+            "name": "Fake Pass Current Mission",
+            "description": "IWontTakeAFreePass",
+            "id": "fake_pass_current_mission",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Mission",
+            "name": "Let's Start New Game",
+            "description": "NewGamePlease",
+            "id": "newgame",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Action Figures",
+            "description": "ILikePlayingWithToys",
+            "id": "action_figures",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Ant Peds",
+            "description": "AntsAntsAntMan",
+            "id": "ped_size_super_tiny",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "ASSERT DOMINANCE",
+            "description": "AssertDominance",
+            "id": "t_pose_peds",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Backwards Peds",
+            "description": "BackwardsPeds",
+            "id": "ped_rotation_backwards",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Big Heads",
+            "description": "BigHeadsMode",
+            "id": "big_heads",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Disable Headshots",
+            "description": "BulletproofForeheads",
+            "id": "disable_headshots",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Disable All Weapon Damage",
+            "description": "TruePacifist",
+            "id": "disable_all_weapon_damage",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Everybody Bleed Now!",
+            "description": "EverybodyBleedNow",
+            "id": "everybody_bleed_now",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Head Peds",
+            "description": "HeadPeds",
+            "id": "head_peds",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Hold The F Up...",
+            "description": "HoldTheFUp",
+            "id": "hold_the_f_up",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Eveyone has Super Damage",
+            "description": "SuperDamageEveryone",
+            "id": "deadly_bullets_quad_dmg_everyone",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "I have Super Damage",
+            "description": "IHaveSuperPower",
+            "id": "deadly_bullets_quad_dmg_player"
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Inverted Weapon Damage",
+            "description": "HealingBullets",
+            "id": "inverted_weapon_damage",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Invincible (Everyone)",
+            "description": "NoOneCanHurtAnyone",
+            "id": "infinite_health_everyone",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Large Peds",
+            "description": "LargePeepoPeds",
+            "id": "ped_size_large",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Long Live The Rich!",
+            "description": "LongLiveTheRich",
+            "id": "long_live_the_rich",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Long Necks",
+            "description": "ICanSeeMyHouseFromUpHere",
+            "id": "long_necks",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "One Bullet Magazines",
+            "description": "OneInTheChamber",
+            "id": "one_bullet_magazines",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "One Hit K.O. (Everyone)",
+            "description": "EveryoneLikesToLiveDangerously",
+            "id": "one_hit_ko_everyone",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Ped Wallhack",
+            "description": "ICanSeeYouGuysThroughWalls",
+            "id": "ped_wallhack",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Peds Explode If Run Over",
+            "description": "ExplosivePeds",
+            "id": "peds_explode_when_run_over",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Peds Leave All Vehicles",
+            "description": "ImTiredOfDriving",
+            "id": "everyone_leaves_all_vehicles",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Rainbow Peds",
+            "description": "TastyUnicornPoop",
+            "id": "rainbow_peds",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Remove Everyone's Weapons",
+            "description": "NoWeaponsAllowed",
+            "id": "remove_everyones_weapons",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Rotating Peds (X)",
+            "description": "PedsRotatingOnX",
+            "id": "ped_rotation_continuous_x",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Rotating Peds (Y)",
+            "description": "PedsRotatingOnY",
+            "id": "ped_rotation_continuous_y",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Rotating Peds (Z)",
+            "description": "PedsRotatingOnZ",
+            "id": "ped_rotation_continuous_z",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Set Everyone On Fire",
+            "description": "HotPotato",
+            "id": "set_everyone_on_fire",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Spawn Dumptrucks",
+            "description": "DamnBoiHeThicc",
+            "id": "big_butts",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "HOREG MAN Thomas Alfa Edisound",
+            "description": "HOREGMAN",
+            "id": "spawn_horeg",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "MBG MAKAN BERGIZI GRATIS",
+            "description": "MBGPRABOWO",
+            "id": "spawn_mbg",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Speeeeeen!",
+            "description": "Speeeeeen",
+            "id": "rotating_peds",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Tiny Peds",
+            "description": "TinyPeepoPeds",
+            "id": "ped_size_tiny",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Upside-Down Peds",
+            "description": "InALandDownUnder",
+            "id": "ped_rotation_flipped",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "WAYTOODANK",
+            "description": "WAYTOODANK",
+            "id": "dont_lose_your_head",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Ped",
+            "name": "Where Is Everybody?",
+            "description": "ImHearingVoices",
+            "id": "where_is_everybody",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Backwards Objects",
+            "description": "ObjectsAreBackwards",
+            "id": "object_rotation_backwards",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Meteor Garden",
+            "description": "MeteorGarden",
+            "id": "meteor_garden",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Upside-Down Objects",
+            "description": "ObjectsAreUpsideDown",
+            "id": "object_rotation_flipped",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Rotating Objects (X)",
+            "description": "ObjectsRotatingOnX",
+            "id": "object_rotation_continuous_x",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Rotating Objects (Y)",
+            "description": "ObjectsRotatingOnY",
+            "id": "object_rotation_continuous_y",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Rotating Objects (Z)",
+            "description": "ObjectsRotatingOnZ",
+            "id": "object_rotation_continuous_z",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Random Size Objects",
+            "description": "CrazyObject",
+            "id": "object_size_random",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Tiny Objects",
+            "description": "ObjectsAreTiny",
+            "id": "object_size_tiny",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Large Objects",
+            "description": "ObjectsAreLarge",
+            "id": "object_size_large",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Wide Objects",
+            "description": "ObjectsAreWide",
+            "id": "object_size_wide",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Oh No... This Object make my head dizzy",
+            "description": "CrazyScale",
+            "id": "crazy_scale",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Super Wide Objects",
+            "description": "ObjectsAreSuperWide",
+            "id": "object_size_super_wide",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Tall Objects",
+            "description": "ObjectsAreTall",
+            "id": "object_size_tall",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Long Objects",
+            "description": "ObjectsAreLong",
+            "id": "object_size_long",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Paper Thin Objects",
+            "description": "ObjectsArePaperThin",
+            "id": "object_size_paper_thin",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Objects",
+            "name": "Flat Objects",
+            "description": "ObjectsAreFlat",
+            "id": "object_size_flat",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Cops Everywhere",
+            "description": "TooMuchLawAndOrder",
+            "id": "cops_everywhere",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Spawn Angry Hobo",
+            "description": "AngryHobo",
+            "id": "spawn_angry_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Spawn Crazy Hobo",
+            "description": "CrazyHobo",
+            "id": "spawn_crazy_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Spawn Ultra Crazy Hobo",
+            "description": "UltraCrazyHobo",
+            "id": "spawn_ultra_crazy_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Spawn Gigachad Hobo",
+            "description": "GigachadHobo",
+            "id": "spawn_gigachad_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Move All Angry Hobo to Player",
+            "description": "AngryHoboGotMagicWand",
+            "id": "move_all_angry_hobo_to_you",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Move All Angry Hobo to Random Location",
+            "description": "AngryHoboMagicWandError",
+            "id": "move_all_angry_hobo_to_random",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Remove All Angry Hobo",
+            "description": "HoboEradication",
+            "id": "remove_all_angry_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Remove Random Angry Hobo",
+            "description": "OneOfTheHobosGotArrested",
+            "id": "remove_random_angry_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Remove Nearest Angry Hobo",
+            "description": "GoAwayHobo",
+            "id": "remove_nearest_angry_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "remove Farthest Angry Hobo",
+            "description": "ThisHoboNotRendered",
+            "id": "remove_farthest_angry_hobo",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Disarm All NPCs",
+            "description": "LeaveTheGunsToMe",
+            "id": "disarm_all_npcs",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Explode All NPCs",
+            "description": "BoomGoesTheDynamite",
+            "id": "explode_all_npcs",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Give NPCs An RPG",
+            "description": "RocketParty",
+            "id": "give_npcs_an_rpg",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Give Me Spry can and Fire Extinguisher",
+            "description": "RocketParty",
+            "id": "give_npcs_a_sprcan_fire_ex",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Launch All NPCs",
+            "description": "UpUpAndAway",
+            "id": "launch_all_npcs",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_NPCs",
+            "name": "Teleport All NPCs To Player",
+            "description": "WhoAreYouPeople",
+            "id": "teleport_all_npcs_to_player",
+            "exclusive": false
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "422",
+            "name": "BobcatAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "457",
+            "name": "CaddyAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "532",
+            "name": "CombineAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "411",
+            "name": "InfernusAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "571",
+            "name": "KartAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "444",
+            "name": "MonsterAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "423",
+            "name": "MrWhoopeeAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "572",
+            "name": "MowerAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "432",
+            "name": "RhinoAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "539",
+            "name": "VortexAllAround"
+        },
+        {
+            "category": "CustomVehicle",
+            "id": "-1",
+            "name": "RandomVehicleAllAround"
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "My Head Gonna Explode",
+            "description": "ExplodeHead",
+            "id": "pop_head",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Spawn Fire Around Player",
+            "description": "SpawnFireAroundPlayer",
+            "id": "spawn_fire_around_player",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "-Health, -Armor, -$250k",
+            "description": "INeedSomeHindrance",
+            "id": "anti_health_armor_money",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Add Random Blips",
+            "description": "PointsOfUninterest",
+            "id": "add_random_blips",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Bankrupt",
+            "description": "CrashTookAllMyMoney",
+            "id": "bankrupt",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Carl! It's Zero!",
+            "description": "ZeroNeedsYourHelp",
+            "id": "teleport_to_zero",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Cinematic Vehicle Camera",
+            "description": "MachinimaMode",
+            "id": "cinematic_vehicle_camera",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Death (1% Chance)",
+            "description": "TheChanceOfSuddenDeath",
+            "id": "one_percent_death",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Disable Aiming",
+            "description": "IForgotHowToAim",
+            "id": "disable_aiming",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Disable One Movement Key",
+            "description": "DisableOneMovementKey",
+            "id": "disable_one_movement_key",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Disable Shooting",
+            "description": "IForgotHowToShoot",
+            "id": "disable_shooting",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Disable Swimming",
+            "description": "IForgotHowToSwim",
+            "id": "disable_swimming",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Drive Wander",
+            "description": "Autopilot",
+            "id": "drive_wander",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Drunk Player",
+            "description": "DrunkPlayer",
+            "id": "drunk_player",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Experience The Lag",
+            "description": "PacketLoss",
+            "id": "experience_the_lag",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Explosive Bullets",
+            "description": "BombasticImpact",
+            "id": "explosive_bullets",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Eye For An Eye",
+            "description": "EyeForAnEye",
+            "id": "pacifist",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Fire Bullets",
+            "description": "OilOnTheStreets",
+            "id": "fire_bullets",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Flower Power",
+            "description": "FlowerPower",
+            "id": "flower_power",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Force Field",
+            "description": "ForceField",
+            "id": "force_field",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Force Mouse Steering",
+            "description": "ForceVehicleMouseSteering",
+            "id": "force_vehicle_mouse_steering",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Forced Aiming",
+            "description": "ICanOnlyAim",
+            "id": "forced_aiming",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Sadbor Dance (Short)",
+            "description": "SadborShort",
+            "id": "sadbor_dance_short",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Sadbor Dance (Long)",
+            "description": "SadborLong",
+            "id": "sadbor_dance_long",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Forced Look Behind",
+            "description": "EyesInTheBack",
+            "id": "forced_look_behind",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Forced Shooting",
+            "description": "ICanOnlyShoot",
+            "id": "forced_shooting",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Freefall!",
+            "description": "WhereWeDroppingBoys",
+            "id": "freefall",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Galaxy Note 7",
+            "description": "DangerousPhoneCalls",
+            "id": "galaxy_note_7",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Busted.....",
+            "description": "PrankBusted",
+            "id": "get_busted_fake",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Wasted....",
+            "description": "PrankWasted",
+            "id": "get_wasted_fake",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Get Busted",
+            "description": "GoToJail",
+            "id": "get_busted",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Get Wasted",
+            "description": "Hospitality",
+            "id": "get_wasted",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Grounded",
+            "description": "ImNotAKangaroo",
+            "id": "disable_jumping",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Gun Game",
+            "description": "ModernWarfare2Lobby",
+            "id": "gun_game",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Instantly Hungry",
+            "description": "IllHave2Number9s",
+            "id": "instantly_hungry",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Inverted Controls",
+            "description": "InvertedControls",
+            "id": "inverted_controls",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "It's Rewind Time!",
+            "description": "ItsRewindTime",
+            "id": "its_rewind_time",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Kick Out Of Vehicle",
+            "description": "ThisAintYourCar",
+            "id": "kick_player_out_of_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Let's Take A Break",
+            "description": "LetsTakeABreak",
+            "id": "lets_take_a_break",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Lock Mouse",
+            "description": "WhoUnpluggedMyMouse",
+            "id": "lock_mouse",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Lock Player In Vehicle",
+            "description": "ThereIsNoEscape",
+            "id": "lock_player_inside_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Low FOV",
+            "description": "LowFOV",
+            "id": "low_fov",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Millionaire",
+            "description": "IJustWonTheLottery",
+            "id": "millionaire",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "No Need To Hurry",
+            "description": "NoNeedToHurry",
+            "id": "no_need_to_hurry",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "No Shooting Allowed",
+            "description": "GunsAreDangerous",
+            "id": "no_shooting_allowed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "No Tasks Allowed",
+            "description": "NoTasksAllowed",
+            "id": "no_tasks_allowed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Pedal To The Metal",
+            "description": "PedalToTheMetal",
+            "id": "pedal_to_the_metal",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Portal Guns",
+            "description": "CaveJohnsonWouldBeProud",
+            "id": "portal_guns",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Quake FOV",
+            "description": "QuakeFOV",
+            "id": "quake_fov",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Random Outfit",
+            "description": "ASetOfNewClothes",
+            "id": "random_outfit",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Reset Camera",
+            "description": "NaturalView",
+            "id": "reset_camera",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Remove All Weapons",
+            "description": "NoWeaponsForYou",
+            "id": "remove_all_weapons",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Remove Current Weapon",
+            "description": "IWillTakeThisGunFromYou",
+            "id": "remove_current_weapon",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Remove Random Weapon",
+            "description": "IWillTakeAGunFromYou",
+            "id": "remove_random_weapon",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Ring Ring !!",
+            "description": "RingRing",
+            "id": "ring_ring",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Shaky Hands",
+            "description": "IJustCantHoldStill",
+            "id": "shaky_hands",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Shuffle Blips",
+            "description": "ThesePlacesOnceMadeSense",
+            "id": "shuffle_blips",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Solid Water",
+            "description": "JesusInTheHouse",
+            "id": "walk_on_water",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Steer Bias (Left)",
+            "description": "LeftSideBias",
+            "id": "steer_bias_left",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Steer Bias (Right)",
+            "description": "RightSideBias",
+            "id": "steer_bias_right",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Super Low FOV",
+            "description": "SuperLowFOV",
+            "id": "super_low_fov",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "SUPER. HOT.",
+            "description": "SUPERHOT",
+            "id": "superhot",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Swim Like Tommy",
+            "description": "SwimLikeTommy",
+            "id": "swim_like_tommy",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Switch To Unarmed",
+            "description": "PleaseUseYourFists",
+            "id": "switch_to_unarmed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "The Firing Circus",
+            "description": "TheFiringCircus",
+            "id": "the_firing_circus",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Ballas All Around",
+            "description": "BallasAllAround",
+            "id": "spawn_ballas",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Spawn Hunter with Army and Attack Player",
+            "description": "OhNoArmyIsHuntingMe",
+            "id": "spawn_enemy_heli",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "The Flash",
+            "description": "FastestManAlive",
+            "id": "the_flash",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Vehicle Bumper Camera",
+            "description": "FrontRowSeat",
+            "id": "vehicle_bumper_camera",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Void Warp",
+            "description": "UnderTheMap",
+            "id": "void_warp",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Walk Off",
+            "description": "LetsGoForAWalk",
+            "id": "walk_off",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Warp In Random Vehicle",
+            "description": "ItsYourUber",
+            "id": "warp_player_into_random_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "I Have 2 Weapon in My Hand",
+            "description": "IHave2WeaponInMyHand",
+            "id": "dual_wield_weapons",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Weapon Recoil",
+            "description": "ThoseAreSomeStrongWeapons",
+            "id": "weapon_recoil",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Weapon Roulette",
+            "description": "WeaponRoulette",
+            "id": "weapon_roulette",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "You've been struck by train",
+            "description": "YouveBeenStruckByTrain",
+            "id": "struck_by_train",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "You've been struck by...",
+            "description": "YouveBeenStruckBy",
+            "id": "struck_by_truck",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "You've been struck by... golf",
+            "description": "YouveBeenStruckByCaddy",
+            "id": "struck_by_caddy",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "You've been struck by... TANK!!!",
+            "description": "YouveBeenStruckByTank",
+            "id": "struck_by_tank",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "You've been struck by Random Vehicle",
+            "description": "YouveBeenStruckByRandomVehicle",
+            "id": "struck_by_random_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "You know what to do.",
+            "description": "WhyDidYouBlowUpRydersCar",
+            "id": "blow_up_ryders_car",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Player",
+            "name": "Zooming FOV",
+            "description": "ZoomingFOV",
+            "id": "zooming_fov",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Stats",
+            "name": "Randomize Stats",
+            "description": "RandomizeStats",
+            "id": "randomize_player_stats_all_timed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Stats",
+            "name": "Randomize Stats Once",
+            "description": "RandomizeStatsOnce",
+            "id": "randomize_player_stats_all",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Framerate",
+            "name": "Powerpoint Presentation",
+            "description": "PowerpointPresentation",
+            "id": "fps_15",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Framerate",
+            "name": "Smooth Criminal",
+            "description": "SmoothCriminal",
+            "id": "fps_60",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Why All Vehicle Lose their Door?",
+            "description": "WhyAllVehicleLoseTheirDoor",
+            "id": "car_is_broken",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Mechanic Forget to Install my Wheel",
+            "description": "MechanicForgetToInstallMyWheel",
+            "id": "oh_no_my_wheel",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Oh No My Wheel Gone",
+            "description": "RemoveRandomWheel",
+            "id": "detach_random_wheel",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "All Vehicles Alarmy",
+            "description": "SoundTheAlarm",
+            "id": "all_vehicles_alarmy",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Arcade Racer Camera",
+            "description": "SegaRallyChampionship",
+            "id": "arcade_racer_camera",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Backwards Vehicles",
+            "description": "BackPeepoHappy",
+            "id": "vehicle_rotation_backwards",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Beyblade",
+            "description": "LetItRip",
+            "id": "beyblade",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Carmageddon",
+            "description": "Carmageddon",
+            "id": "carmageddon",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Delete All Vehicles",
+            "description": "GoodbyeAllSweetRides",
+            "id": "delete_all_vehicles",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Delete Vehicle",
+            "description": "GoodbyeSweetRide",
+            "id": "delete_vehicle",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Do A Kickflip!",
+            "description": "DoAKickflip",
+            "id": "kickflip",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Explode Random Vehicle",
+            "description": "OneCarGoesBoom",
+            "id": "explode_random_vehicle",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Get Towed Dude",
+            "description": "GetTowed",
+            "id": "gettowed",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Vehicle Dancing",
+            "description": "LetWeDance",
+            "id": "vehicle_dance",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Flat Vehicles",
+            "description": "FlatPeepoHappy",
+            "id": "vehicle_size_flat",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Flipped Vehicles",
+            "description": "FlippedPeepoHappy",
+            "id": "vehicle_rotation_flipped",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Freeze Vehicle",
+            "description": "StuckInTime",
+            "id": "freeze_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Ghost Vehicles",
+            "description": "InvisibleVehicles",
+            "id": "invisible_vehicles",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Ghost Rider",
+            "description": "GhostRider",
+            "id": "ghost_rider",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "High Suspension Damping",
+            "description": "VeryDampNoBounce",
+            "id": "high_suspension_damping",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "HONK!!!",
+            "description": "HONKHONK",
+            "id": "honk_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "HONK AND BOOST!!!",
+            "description": "HONKANDBOOST",
+            "id": "honk_and_boost_vehicle",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Honk Boost",
+            "description": "GottaHonkFast",
+            "id": "honk_boost",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Hot Wheels",
+            "description": "HotWheelsRacing",
+            "id": "vehicle_size_super_tiny",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Ignite Current Vehicle",
+            "description": "WayTooHot",
+            "id": "set_current_vehicle_on_fire",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Invert Vehicle Speed",
+            "description": "LetsGoBack",
+            "id": "invert_vehicle_speed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Large Vehicles",
+            "description": "LargePeepoHappy",
+            "id": "vehicle_size_large",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Long Vehicles",
+            "description": "LongPeepoHappy",
+            "id": "vehicle_size_long",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Oh Hey, Tanks!",
+            "description": "OhHeyTanks",
+            "id": "oh_hey_tanks",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Paper Thin Vehicles",
+            "description": "PaperPeepoHappy",
+            "id": "vehicle_size_paper_thin",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Pop Tires Of All Vehicles",
+            "description": "TiresBeGone",
+            "id": "pop_tires_of_all_vehicles",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Pride Vehicles",
+            "description": "AllColorsAreBeautiful",
+            "id": "pride_traffic",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Relative Car Gravity",
+            "description": "SpiderCars",
+            "id": "vehicle_driving_on_walls",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Rota(to)ry Engines",
+            "description": "RotatoryEngines",
+            "id": "vehicle_rotation_based_on_speed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Rotating Vehicles (X)",
+            "description": "RotatePeepoHappyX",
+            "id": "vehicle_rotation_continuous_x",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Rotating Vehicles (Y)",
+            "description": "RotatePeepoHappyY",
+            "id": "vehicle_rotation_continuous_y",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Rotating Vehicles (Z)",
+            "description": "RotatePeepoHappyZ",
+            "id": "vehicle_rotation_continuous_z",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Send Vehicles To Space",
+            "description": "StairwayToHeaven",
+            "id": "send_vehicles_to_space",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Speed (1994)",
+            "description": "KeepYourPace",
+            "id": "minimum_speed",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Super Wide Vehicles",
+            "description": "WiderPeepoHappy",
+            "id": "vehicle_size_super_wide",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Swap Vehicles On Impact",
+            "description": "SwapVehiclesOnImpact",
+            "id": "swap_vehicles_on_impact",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Tall Vehicles",
+            "description": "TallPeepoHappy",
+            "id": "vehicle_size_tall",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Tiny Vehicles",
+            "description": "TinyPeepoHappy",
+            "id": "vehicle_size_tiny",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Tipping Point",
+            "description": "TippingPoint",
+            "id": "very_flippable_vehicles",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "To Drive Or Not To Drive",
+            "description": "ToDriveOrNotToDrive",
+            "id": "to_drive_or_not_to_drive",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "To The Left, To The Right",
+            "description": "ToTheLeftToTheRight",
+            "id": "to_the_left_to_the_right",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Turn Vehicles Around",
+            "description": "TurnAround",
+            "id": "turn_vehicles_around",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Unflippable Vehicles",
+            "description": "UnflippableVehicles",
+            "id": "unflippable_vehicles",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Vehicle Boost",
+            "description": "FullForceForward",
+            "id": "vehicle_boost",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Vehicle One Hit K.O.",
+            "description": "NoDings",
+            "id": "vehicle_one_hit_ko",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Oil Everywhere",
+            "description": "OilEverywhere",
+            "id": "oil_on_roads",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Wide Vehicles",
+            "description": "WidePeepoHappy",
+            "id": "vehicle_size_wide",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Your Car Floats When Hit",
+            "description": "ImTheBubbleCar",
+            "id": "your_car_floats_away_when_hit",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Vehicle",
+            "name": "Zero Suspension Damping",
+            "description": "LowrideAllNight",
+            "id": "zero_suspension_damping",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Wanted",
+            "name": "Object.freeze(WantedLevel)",
+            "description": "FreezeWanted",
+            "id": "freeze_wanted_level",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Wanted",
+            "name": "Always Wanted",
+            "description": "ICanSeeStars",
+            "id": "always_wanted",
+            "exclusive": true
+        },
+        {
+            "category": "CustomEffects_Wanted",
+            "name": "Respect The Law",
+            "description": "RespectTheLaw",
+            "id": "respect_the_law",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Weather",
+            "name": "Earthquake",
+            "description": "Earthquake",
+            "id": "earthquake",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Weather",
+            "name": "Very Strong Wind",
+            "description": "ItHeckinWimdy",
+            "id": "very_strong_wind",
+            "exclusive": false
+        },
+        {
+            "category": "CustomEffects_Weather",
+            "name": "Kinda Spooky...",
+            "description": "SpookyWeather",
+            "id": "mist",
+            "exclusive": false
+        },
+        {
+            "category": "Teleportation",
+            "name": "Fake Teleport",
+            "description": "HahaGotYourNose",
+            "id": "fake_teleport",
+            "exclusive": true
+        },
+        {
+            "category": "Teleportation",
+            "name": "Random Teleport",
+            "description": "LetsGoSightseeing",
+            "id": "random_teleport",
+            "exclusive": true
+        },
+        {
+            "category": "Teleportation",
+            "name": "Teleport To Waypoint",
+            "description": "IKnowJustTheRightPlace",
+            "id": "teleport_to_marker",
+            "exclusive": false
+        },
+        {
+            "category": "Teleportation",
+            "name": "Teleport To Liberty City",
+            "description": "LetsTalkAboutTheMultiverse",
+            "id": "teleport_to_liberty_city",
+            "exclusive": true
+        }
+    ],
+    "Location": [
+        {
+            "name": "Groove Street",
+            "description": "BringMeHome",
+            "x": 2493,
+            "y": -1670,
+            "z": 15
+        },
+        {
+            "name": "A Tower",
+            "description": "BringMeToATower",
+            "x": 1544,
+            "y": -1353,
+            "z": 332
+        },
+        {
+            "name": "A Pier",
+            "description": "BringMeToAPier",
+            "x": 836,
+            "y": -2061,
+            "z": 15
+        },
+        {
+            "name": "The LS Airport",
+            "description": "BringMeToTheLSAirport",
+            "x": 2109,
+            "y": -2544,
+            "z": 16
+        },
+        {
+            "name": "The Docks",
+            "description": "BringMeToTheDocks",
+            "x": 2760,
+            "y": -2456,
+            "z": 16
+        },
+        {
+            "name": "A Mountain",
+            "description": "BringMeToAMountain",
+            "x": -2233,
+            "y": -1737,
+            "z": 483
+        },
+        {
+            "name": "The SF Airport",
+            "description": "BringMeToTheSFAirport",
+            "x": -1083,
+            "y": 409,
+            "z": 17
+        },
+        {
+            "name": "A Bridge",
+            "description": "BringMeToABridge",
+            "x": -2669,
+            "y": 1595,
+            "z": 220
+        },
+        {
+            "name": "A Secret Place",
+            "description": "BringMeToASecretPlace",
+            "x": 213,
+            "y": 1911,
+            "z": 20
+        },
+        {
+            "name": "A Quarry",
+            "description": "BringMeToAQuarry",
+            "x": 614,
+            "y": 856,
+            "z": -40
+        },
+        {
+            "name": "The LV Airport",
+            "description": "BringMeToTheLVAirport",
+            "x": 1612,
+            "y": 1166,
+            "z": 17
+        },
+        {
+            "name": "Big Ear",
+            "description": "BringMeToBigEar",
+            "x": -310,
+            "y": 1524,
+            "z": 78
+        }
+    ]
+}
