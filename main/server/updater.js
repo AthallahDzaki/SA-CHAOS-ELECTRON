@@ -1,5 +1,8 @@
 import { UpdateManager } from 'velopack';
-import { app } from 'electron';
+import electronModule from 'electron';
+const app = (electronModule && typeof electronModule === 'object' && electronModule.app)
+    ? electronModule.app
+    : { getVersion: () => '1.0.0' };
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -411,15 +414,35 @@ export async function checkAndSyncModFiles(gtaPath, logger = console.log) {
     }
 }
 
+export const UPDATE_CHANNELS = Object.freeze({
+    RELEASE: "release",
+    BETA: "beta",
+});
+
+export function resolveUpdateChannel(config = GeneralConfig) {
+    const raw = String(config?.General?.UpdateChannel || "release").trim().toLowerCase();
+    return raw === "beta" ? UPDATE_CHANNELS.BETA : UPDATE_CHANNELS.RELEASE;
+}
+
+export function getVelopackChannelName(channel) {
+    return channel === UPDATE_CHANNELS.BETA ? "beta" : "win";
+}
+
 export async function runVelopackUpdater(serverVersion, productCode, onProgress, onComplete) {
     try {
+        const selectedChannel = resolveUpdateChannel(GeneralConfig);
+        const velopackChannel = getVelopackChannelName(selectedChannel);
+        const isBeta = selectedChannel === UPDATE_CHANNELS.BETA;
+        const channelLabel = isBeta ? "Beta (Fitur Lebih Awal)" : "Release (Stable)";
+
         // Jika pengguna secara sadar mengaktifkan P2P Updater (Alpha), gunakan HybridUpdateOrchestrator
         // dengan fallback otomatis ke S3. Jika P2P OFF (default), jalankan 100% kode S3 existing di bawah.
         try {
             const { readPersistedP2PSettings, getGlobalP2POrchestrator } = await import("./p2p/index.js");
             const p2pSettings = readPersistedP2PSettings();
             if (p2pSettings && p2pSettings.p2pUpdaterEnabled === true) {
-                console.log("[Updater] P2P Alpha enabled by user. Delegating to HybridUpdateOrchestrator (S3 authoritative + P2P transport + S3 fallback)...");
+                p2pSettings.channel = velopackChannel;
+                console.log(`[Updater] P2P Alpha enabled by user (Channel: ${channelLabel}). Delegating to HybridUpdateOrchestrator...`);
                 const orchestrator = getGlobalP2POrchestrator();
                 await orchestrator.updateConfig(p2pSettings);
                 const result = await orchestrator.checkForUpdatesAndInstall({
@@ -435,7 +458,7 @@ export async function runVelopackUpdater(serverVersion, productCode, onProgress,
                             ? ` • ${(prog.speedBps / (1024 * 1024)).toFixed(2)} MB/s`
                             : "";
                         onProgress({
-                            status: prog.status || "Checking for updates (S3)",
+                            status: prog.status || `Checking for updates (S3 - ${channelLabel})`,
                             detail: totalMB
                                 ? `${downloadedMB} / ${totalMB} (${prog.percent || 0}%)${speedStr}`
                                 : `${prog.percent || 0}%`,
@@ -444,7 +467,8 @@ export async function runVelopackUpdater(serverVersion, productCode, onProgress,
                             downloadedMB,
                             sourceCategory: prog.sourceCategory || "S3 (Standard)",
                             isDelta: false,
-                            updateTypeLabel: prog.sourceCategory || "Update"
+                            updateTypeLabel: prog.sourceCategory || "Update",
+                            channel: selectedChannel,
                         });
                     },
                     onComplete: () => {
@@ -462,60 +486,78 @@ export async function runVelopackUpdater(serverVersion, productCode, onProgress,
 
         // Menggunakan perantara PHP untuk men-generate S3 Pre-signed URL yang di-private
         const updateUrl = `https://updater.sa-chaos.my.id/velopack.php/`;
-        console.log(`[Updater] Checking for updates...`);
-        if (onProgress) onProgress({ status: "Checking for updates..." });
+        console.log(`[Updater] Checking for updates on channel: ${channelLabel} [${velopackChannel}]...`);
+        if (onProgress) onProgress({ status: `Checking for updates (${channelLabel})...` });
         
         try {
             const um = new UpdateManager();
             um.setUrlOrPath(updateUrl);
+            um.setExplicitChannel(velopackChannel);
+            um.setAllowDowngrade(true);
             const updateInfo = await um.checkForUpdatesAsync();
             
             if (updateInfo) {
                 const targetRelease = updateInfo.targetFullRelease || updateInfo.TargetFullRelease || updateInfo;
                 const newVersion = targetRelease.version || targetRelease.Version || "latest";
 
-                // Check remote releases.win.json to determine if a delta package is available for display info
+                // Check remote releases.<channel>.json to determine if a delta package is available for display info
                 let isDelta = false;
                 let displayBytes = Number(targetRelease.size || 0);
                 let matchedDelta = null;
 
                 try {
                     const currentVersion = typeof app !== 'undefined' && app.getVersion ? String(app.getVersion()).replace(/^v/i, '') : '';
-                    const releasesRes = await axios.get(`${updateUrl}releases.win.json`, {
-                        headers: {
-                            'User-Agent': OFFICIAL_USER_AGENT
-                        },
-                        timeout: 8000
-                    });
-                    const remoteAssets = releasesRes.data?.Assets || [];
-                    
-                    // Filter dan sort semua aset Full berdasarkan versi descending
-                    const fullAssets = remoteAssets
-                        .filter((a) => String(a.Type).toLowerCase() === "full")
-                        .sort((a, b) => compareSemver(b.Version, a.Version));
-
-                    const targetIdx = fullAssets.findIndex((a) => String(a.Version).replace(/^v/i, '') === String(newVersion).replace(/^v/i, ''));
-                    const immediatePreviousVersion = (targetIdx !== -1 && fullAssets[targetIdx + 1])
-                        ? String(fullAssets[targetIdx + 1].Version).replace(/^v/i, '')
-                        : null;
-
-                    // Delta package HANYA kompatibel jika client berada tepat di versi sebelumnya (misal 1.0.70 -> 1.0.71).
-                    // Jika client melompati versi (misal 1.0.68 -> 1.0.71), delta tidak cocok dan memicu update loop,
-                    // sehingga WAJIB menggunakan Full Package.
-                    const isDirectlyConsecutive = Boolean(immediatePreviousVersion && currentVersion && currentVersion === immediatePreviousVersion);
-
-                    if (isDirectlyConsecutive) {
-                        matchedDelta = remoteAssets.find(
-                            (a) => String(a.Version).replace(/^v/i, '') === String(newVersion).replace(/^v/i, '') && String(a.Type).toLowerCase() === "delta"
-                        );
-
-                        if (matchedDelta && matchedDelta.Size) {
-                            displayBytes = Number(matchedDelta.Size);
-                            isDelta = true;
-                            console.log(`[Updater] Delta update valid dari v${currentVersion} ke v${newVersion} (${displayBytes} bytes)`);
+                    let releasesRes;
+                    try {
+                        releasesRes = await axios.get(`${updateUrl}releases.${velopackChannel}.json`, {
+                            headers: {
+                                'User-Agent': OFFICIAL_USER_AGENT
+                            },
+                            timeout: 8000
+                        });
+                    } catch (feedErr) {
+                        console.warn(`[Updater] Could not query remote releases.${velopackChannel}.json:`, feedErr.message);
+                        if (velopackChannel !== "win") {
+                            try {
+                                releasesRes = await axios.get(`${updateUrl}releases.win.json`, {
+                                    headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                                    timeout: 8000
+                                });
+                            } catch {}
                         }
-                    } else {
-                        console.log(`[Updater] Client v${currentVersion || 'unknown'} melompati versi (versi basis delta: v${immediatePreviousVersion || 'none'}). Mengunduh Full Update untuk memastikan update berhasil tanpa loop.`);
+                    }
+                    const remoteAssets = releasesRes?.data?.Assets || [];
+                    
+                    // Membaca releases.win.json langsung dari urutan paling terbaru (atas) ke bawah
+                    const fullAssets = remoteAssets.filter((a) => String(a.Type).toLowerCase() === "full");
+                    const deltaAssets = remoteAssets.filter((a) => String(a.Type).toLowerCase() === "delta");
+
+                    const clean = (v) => String(v || '').replace(/^v/i, '').trim();
+                    const targetFull = fullAssets[0];
+                    const prev1Full = fullAssets[1]; // Versi basis x-1
+                    const prev2Full = fullAssets[2]; // Versi basis x-2
+
+                    // Delta Update dibatasi maksimal dalam jendela 3 versi teratas dari feed (x, x-1, x-2):
+                    // - Klien di x-1: butuh 1 delta (delta target x)
+                    // - Klien di x-2: butuh 2 delta berantai (delta x-1 + delta x)
+                    // - Klien di x-3 atau lebih lama: di luar batas 3 versi, WAJIB Full Update
+                    if (currentVersion && targetFull && clean(newVersion) === clean(targetFull.Version)) {
+                        const deltaTarget = deltaAssets.find((d) => clean(d.Version) === clean(targetFull.Version));
+                        const deltaPrev1 = prev1Full ? deltaAssets.find((d) => clean(d.Version) === clean(prev1Full.Version)) : null;
+
+                        if (prev1Full && clean(currentVersion) === clean(prev1Full.Version) && deltaTarget?.Size) {
+                            // Kasus x-1: 1 tahap delta
+                            displayBytes = Number(deltaTarget.Size);
+                            isDelta = true;
+                            console.log(`[Updater] Terdeteksi basis x-1 (v${prev1Full.Version}). Menggunakan delta 1 tahap: ${deltaTarget.FileName} (${(displayBytes / 1024).toFixed(0)} KB)`);
+                        } else if (prev2Full && clean(currentVersion) === clean(prev2Full.Version) && deltaTarget?.Size && deltaPrev1?.Size) {
+                            // Kasus x-2: 2 tahap delta berantai
+                            displayBytes = Number(deltaTarget.Size) + Number(deltaPrev1.Size);
+                            isDelta = true;
+                            console.log(`[Updater] Terdeteksi basis x-2 (v${prev2Full.Version}). Menggunakan 2 delta berantai: ${deltaPrev1.FileName} + ${deltaTarget.FileName} (${(displayBytes / 1024).toFixed(0)} KB)`);
+                        } else {
+                            console.log(`[Updater] Client v${currentVersion} berada di luar jendela 3 versi teratas (x: v${targetFull.Version}, x-1: v${prev1Full?.Version || 'none'}, x-2: v${prev2Full?.Version || 'none'}). Mengunduh Full Release.`);
+                        }
                     }
                 } catch (e) {
                     console.warn(`[Updater] Could not query remote delta size:`, e.message);
@@ -540,19 +582,7 @@ export async function runVelopackUpdater(serverVersion, productCode, onProgress,
                     });
                 }
                 
-                // Prioritize lightweight Delta package (~791 KB) over massive Full package (169 MB)
-                // This resolves the ~200 KB/s slow download bottleneck by cutting payload size by 99.5%
-                const targetToDownload = (isDelta && matchedDelta) ? {
-                    ...targetRelease,
-                    fileName: matchedDelta.FileName || matchedDelta.fileName,
-                    FileName: matchedDelta.FileName || matchedDelta.fileName,
-                    size: BigInt(matchedDelta.Size || matchedDelta.size || 0),
-                    Size: matchedDelta.Size || matchedDelta.size,
-                    sha1: matchedDelta.SHA1 || matchedDelta.sha1,
-                    SHA1: matchedDelta.SHA1 || matchedDelta.sha1
-                } : targetRelease;
-
-                await um.downloadUpdatesAsync(targetToDownload, (progress) => {
+                await um.downloadUpdatesAsync(targetRelease, (progress) => {
                     let downloadedDisplay;
                     if (displayBytes > 0) {
                         const bytesDownloaded = displayBytes * (progress / 100);
@@ -603,7 +633,7 @@ export async function runVelopackUpdater(serverVersion, productCode, onProgress,
                 // Allow UI to render the completion state before invoking updater restart
                 setTimeout(() => {
                     try {
-                        um.applyUpdatesAndRestart(targetToDownload);
+                        um.applyUpdatesAndRestart(targetRelease);
                     } catch (e) {
                         console.error("[Updater] applyUpdatesAndRestart error:", e);
                         app.quit();
@@ -622,7 +652,8 @@ export async function runVelopackUpdater(serverVersion, productCode, onProgress,
             const fallbackHandled = await runFallbackUpdater({
                 updateUrl,
                 onProgress,
-                onComplete
+                onComplete,
+                channel: velopackChannel
             });
 
             if (!fallbackHandled && onComplete) {
@@ -659,7 +690,7 @@ function compareSemver(v1, v2) {
     return 0;
 }
 
-export async function runFallbackUpdater({ updateUrl, onProgress, onComplete }) {
+export async function runFallbackUpdater({ updateUrl, onProgress, onComplete, channel = "win" } = {}) {
     console.log("[Backup Updater] Menjalankan metode pembaruan cadangan kedua (Second-Way Updater)...");
     try {
         if (onProgress) {
@@ -672,20 +703,37 @@ export async function runFallbackUpdater({ updateUrl, onProgress, onComplete }) 
             });
         }
 
-        // 1. Ambil metadata releases.win.json langsung via Axios dengan Official User-Agent
-        const releasesRes = await axios.get(`${updateUrl}releases.win.json`, {
-            headers: { 'User-Agent': OFFICIAL_USER_AGENT },
-            timeout: 10000
-        });
+        const selectedChannel = channel ? (channel === "beta" ? "beta" : "win") : getVelopackChannelName(resolveUpdateChannel(GeneralConfig));
+        let releasesRes;
+        try {
+            releasesRes = await axios.get(`${updateUrl}releases.${selectedChannel}.json`, {
+                headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                timeout: 10000
+            });
+        } catch (feedErr) {
+            if (selectedChannel !== "win") {
+                console.warn(`[Backup Updater] releases.${selectedChannel}.json tidak ditemukan, beralih ke releases.win.json:`, feedErr.message);
+                releasesRes = await axios.get(`${updateUrl}releases.win.json`, {
+                    headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                    timeout: 10000
+                });
+            } else {
+                throw feedErr;
+            }
+        }
 
         const assets = releasesRes.data?.Assets || [];
-        const fullRelease = assets.find((a) => String(a.Type).toLowerCase() === "full");
-        if (!fullRelease) {
-            console.warn("[Backup Updater] Tidak ditemukan aset Full pada releases.win.json.");
+        // Membaca releases.win.json langsung dari urutan paling terbaru (atas) ke bawah
+        const fullAssets = assets.filter((a) => String(a.Type).toLowerCase() === "full");
+        const deltaAssets = assets.filter((a) => String(a.Type).toLowerCase() === "delta");
+
+        const targetFull = fullAssets[0];
+        if (!targetFull) {
+            console.warn(`[Backup Updater] Tidak ditemukan aset Full pada releases.${selectedChannel}.json / releases.win.json.`);
             return false;
         }
 
-        const remoteVersion = fullRelease.Version || fullRelease.version;
+        const remoteVersion = targetFull.Version || targetFull.version;
         const currentVersion = app.getVersion();
 
         const isNewer = compareSemver(remoteVersion, currentVersion) > 0;
@@ -696,14 +744,10 @@ export async function runFallbackUpdater({ updateUrl, onProgress, onComplete }) 
             return true;
         }
 
-        const fileName = fullRelease.FileName || fullRelease.fileName;
-        const downloadUrl = `${updateUrl}${fileName}`;
-        const totalBytes = Number(fullRelease.Size || fullRelease.size || 0);
-        const totalDisplay = totalBytes > 0 
-            ? `${(totalBytes / (1024 * 1024)).toFixed(1)} MB` 
-            : "Calculating...";
-
-        console.log(`[Backup Updater] Paket update cadangan ditemukan: v${remoteVersion} (${fileName}, ${totalDisplay}). Mengunduh langsung...`);
+        const fileName = targetFull.FileName || targetFull.fileName;
+        const prev1Full = fullAssets[1];
+        const prev2Full = fullAssets[2];
+        const clean = (v) => String(v || '').replace(/^v/i, '').trim();
 
         // 2. Deteksi lokasi instalasi Velopack (Update.exe & packages directory)
         const execPath = process.execPath;
@@ -724,41 +768,115 @@ export async function runFallbackUpdater({ updateUrl, onProgress, onComplete }) 
             ? path.join(packagesDir, fileName)
             : path.join(app.getPath("temp"), fileName);
 
-        // 3. Unduh file paket .nupkg via stream dengan progress update ke splash screen
-        const writer = fs.createWriteStream(targetDownloadPath);
-        let downloadedBytes = 0;
+        // Periksa apakah paket Full target sudah ada secara lokal
+        if (fs.existsSync(targetDownloadPath) && fs.statSync(targetDownloadPath).size > 10 * 1024 * 1024) {
+            console.log(`[Backup Updater] Paket target sudah tersedia secara lokal di ${targetDownloadPath}`);
+        } else {
+            // Cek apakah paket basis x-1 atau x-2 tersedia di packages untuk rekonstruksi Delta (~1 MB)
+            let deltaPatchSuccess = false;
+            const deltaTarget = deltaAssets.find((d) => clean(d.Version) === clean(targetFull.Version));
+            const deltaPrev1 = prev1Full ? deltaAssets.find((d) => clean(d.Version) === clean(prev1Full.Version)) : null;
 
-        const downloadRes = await axios({
-            url: downloadUrl,
-            method: 'GET',
-            responseType: 'stream',
-            headers: { 'User-Agent': OFFICIAL_USER_AGENT },
-            timeout: 180000
-        });
+            const localPrev1Path = prev1Full ? path.join(packagesDir, prev1Full.FileName || prev1Full.fileName) : null;
+            const localPrev2Path = prev2Full ? path.join(packagesDir, prev2Full.FileName || prev2Full.fileName) : null;
 
-        await new Promise((resolve, reject) => {
-            downloadRes.data.on('data', (chunk) => {
-                downloadedBytes += chunk.length;
-                if (totalBytes > 0 && onProgress) {
-                    const percent = Math.min(99, Math.round((downloadedBytes * 100) / totalBytes));
-                    const dlMB = (downloadedBytes / (1024 * 1024)).toFixed(1);
-                    onProgress({
-                        status: `[Backup Updater] Mengunduh pembaruan v${remoteVersion}...`,
-                        detail: `${dlMB} MB / ${totalDisplay} (${percent}%)`,
-                        percent,
-                        totalMB: totalDisplay,
-                        downloadedMB: `${dlMB} MB`,
-                        isDelta: false,
-                        updateTypeLabel: "Backup Update"
-                    });
+            if (fs.existsSync(candidateUpdateExe)) {
+                if (localPrev1Path && fs.existsSync(localPrev1Path) && deltaTarget) {
+                    try {
+                        console.log(`[Backup Updater] Ditemukan basis x-1 (${prev1Full.Version}). Mengunduh delta 1 tahap: ${deltaTarget.FileName}...`);
+                        const tempDeltaPath = path.join(packagesDir, deltaTarget.FileName);
+                        const deltaRes = await axios({
+                            url: `${updateUrl}${deltaTarget.FileName}`,
+                            method: 'GET',
+                            responseType: 'arraybuffer',
+                            headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                            timeout: 60000
+                        });
+                        fs.writeFileSync(tempDeltaPath, Buffer.from(deltaRes.data));
+                        
+                        console.log(`[Backup Updater] Merekontruksi ${fileName} via Update.exe patch...`);
+                        await new Promise((resolve, reject) => {
+                            const cp = spawn(candidateUpdateExe, ["patch", "--old", localPrev1Path, "--delta", tempDeltaPath, "--output", targetDownloadPath], { stdio: 'ignore' });
+                            cp.on('exit', (code) => code === 0 && fs.existsSync(targetDownloadPath) ? resolve() : reject(new Error(`Exit ${code}`)));
+                            cp.on('error', reject);
+                        });
+                        deltaPatchSuccess = true;
+                        try { fs.unlinkSync(tempDeltaPath); } catch (_) {}
+                        console.log(`[Backup Updater] Rekonstruksi delta 1 tahap BERHASIL!`);
+                    } catch (e) {
+                        console.warn(`[Backup Updater] Delta patch 1 tahap gagal:`, e.message);
+                    }
+                } else if (localPrev2Path && fs.existsSync(localPrev2Path) && deltaTarget && deltaPrev1) {
+                    try {
+                        console.log(`[Backup Updater] Ditemukan basis x-2 (${prev2Full.Version}). Mengunduh 2 delta berantai...`);
+                        const tempDeltaPrev1 = path.join(packagesDir, deltaPrev1.FileName);
+                        const tempDeltaTarget = path.join(packagesDir, deltaTarget.FileName);
+
+                        const [d1Res, d2Res] = await Promise.all([
+                            axios({ url: `${updateUrl}${deltaPrev1.FileName}`, method: 'GET', responseType: 'arraybuffer', headers: { 'User-Agent': OFFICIAL_USER_AGENT }, timeout: 60000 }),
+                            axios({ url: `${updateUrl}${deltaTarget.FileName}`, method: 'GET', responseType: 'arraybuffer', headers: { 'User-Agent': OFFICIAL_USER_AGENT }, timeout: 60000 })
+                        ]);
+                        fs.writeFileSync(tempDeltaPrev1, Buffer.from(d1Res.data));
+                        fs.writeFileSync(tempDeltaTarget, Buffer.from(d2Res.data));
+
+                        console.log(`[Backup Updater] Merekontruksi ${fileName} via 2 delta berantai...`);
+                        await new Promise((resolve, reject) => {
+                            const cp = spawn(candidateUpdateExe, ["patch", "--old", localPrev2Path, "--delta", tempDeltaPrev1, "--delta", tempDeltaTarget, "--output", targetDownloadPath], { stdio: 'ignore' });
+                            cp.on('exit', (code) => code === 0 && fs.existsSync(targetDownloadPath) ? resolve() : reject(new Error(`Exit ${code}`)));
+                            cp.on('error', reject);
+                        });
+                        deltaPatchSuccess = true;
+                        try { fs.unlinkSync(tempDeltaPrev1); } catch (_) {}
+                        try { fs.unlinkSync(tempDeltaTarget); } catch (_) {}
+                        console.log(`[Backup Updater] Rekonstruksi 2 delta berantai BERHASIL!`);
+                    } catch (e) {
+                        console.warn(`[Backup Updater] Delta patch 2 tahap gagal:`, e.message);
+                    }
                 }
-            });
+            }
 
-            downloadRes.data.pipe(writer);
-            writer.on('finish', resolve);
-            writer.on('error', reject);
-            downloadRes.data.on('error', reject);
-        });
+            // Jika delta patch tidak memungkinkan atau gagal, download Full Package secara streaming
+            if (!deltaPatchSuccess) {
+                const totalBytes = Number(targetFull.Size || targetFull.size || 0);
+                const totalDisplay = totalBytes > 0 ? `${(totalBytes / (1024 * 1024)).toFixed(1)} MB` : "Calculating...";
+                console.log(`[Backup Updater] Mengunduh Full Package: v${remoteVersion} (${fileName}, ${totalDisplay})...`);
+
+                const writer = fs.createWriteStream(targetDownloadPath);
+                let downloadedBytes = 0;
+
+                const downloadRes = await axios({
+                    url: `${updateUrl}${fileName}`,
+                    method: 'GET',
+                    responseType: 'stream',
+                    headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                    timeout: 180000
+                });
+
+                await new Promise((resolve, reject) => {
+                    downloadRes.data.on('data', (chunk) => {
+                        downloadedBytes += chunk.length;
+                        if (totalBytes > 0 && onProgress) {
+                            const percent = Math.min(99, Math.round((downloadedBytes * 100) / totalBytes));
+                            const dlMB = (downloadedBytes / (1024 * 1024)).toFixed(1);
+                            onProgress({
+                                status: `[Backup Updater] Mengunduh pembaruan v${remoteVersion}...`,
+                                detail: `${dlMB} MB / ${totalDisplay} (${percent}%)`,
+                                percent,
+                                totalMB: totalDisplay,
+                                downloadedMB: `${dlMB} MB`,
+                                isDelta: false,
+                                updateTypeLabel: "Backup Update"
+                            });
+                        }
+                    });
+
+                    downloadRes.data.pipe(writer);
+                    writer.on('finish', resolve);
+                    writer.on('error', reject);
+                    downloadRes.data.on('error', reject);
+                });
+            }
+        }
 
         console.log(`[Backup Updater] File pembaruan berhasil diunduh ke: ${targetDownloadPath}`);
 
@@ -843,40 +961,86 @@ export async function checkAndSyncDesktopApp(autoInstall = false) {
         global.desktopAppUpdateStatus.status = 'checking';
         global.desktopAppUpdateStatus.updatedAt = Date.now();
         
+        const selectedChannel = resolveUpdateChannel(GeneralConfig);
+        const velopackChannel = getVelopackChannelName(selectedChannel);
         const updateUrl = `https://updater.sa-chaos.my.id/velopack.php/`;
-        const releasesRes = await axios.get(`${updateUrl}releases.win.json`, {
-            headers: { 'User-Agent': OFFICIAL_USER_AGENT },
-            timeout: 10000
-        });
+        let releasesRes;
+        try {
+            releasesRes = await axios.get(`${updateUrl}releases.${velopackChannel}.json`, {
+                headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                timeout: 10000
+            });
+        } catch (feedErr) {
+            if (velopackChannel !== "win") {
+                console.warn(`[Desktop Sync] releases.${velopackChannel}.json tidak ditemukan, beralih ke releases.win.json:`, feedErr.message);
+                releasesRes = await axios.get(`${updateUrl}releases.win.json`, {
+                    headers: { 'User-Agent': OFFICIAL_USER_AGENT },
+                    timeout: 10000
+                });
+            } else {
+                throw feedErr;
+            }
+        }
 
         const assets = releasesRes.data?.Assets || [];
-        const fullRelease = assets.find((a) => String(a.Type).toLowerCase() === "full");
-        if (!fullRelease) return false;
+        // Membaca releases.win.json langsung dari urutan paling terbaru (atas) ke bawah
+        const fullAssets = assets.filter((a) => String(a.Type).toLowerCase() === "full");
+        const deltaAssets = assets.filter((a) => String(a.Type).toLowerCase() === "delta");
 
-        const remoteVersion = fullRelease.Version || fullRelease.version;
+        const targetFull = fullAssets[0];
+        if (!targetFull) return false;
+
+        const remoteVersion = targetFull.Version || targetFull.version;
         const currentVersion = typeof app !== 'undefined' && app.getVersion ? app.getVersion() : '1.0.0';
         const isNewer = compareSemver(remoteVersion, currentVersion) > 0;
+
+        const prev1Full = fullAssets[1];
+        const prev2Full = fullAssets[2];
+        const clean = (v) => String(v || '').replace(/^v/i, '').trim();
+
+        let displaySizeBytes = Number(targetFull.Size || targetFull.size || 0);
+        let updateType = "Full Update";
+
+        if (isNewer) {
+            const deltaTarget = deltaAssets.find((d) => clean(d.Version) === clean(targetFull.Version));
+            const deltaPrev1 = prev1Full ? deltaAssets.find((d) => clean(d.Version) === clean(prev1Full.Version)) : null;
+
+            if (prev1Full && clean(currentVersion) === clean(prev1Full.Version) && deltaTarget?.Size) {
+                displaySizeBytes = Number(deltaTarget.Size);
+                updateType = "Delta Patch (1 tahap)";
+            } else if (prev2Full && clean(currentVersion) === clean(prev2Full.Version) && deltaTarget?.Size && deltaPrev1?.Size) {
+                displaySizeBytes = Number(deltaTarget.Size) + Number(deltaPrev1.Size);
+                updateType = "Delta Patch (2 tahap)";
+            }
+        }
+
+        const sizeDisplay = displaySizeBytes > 0 && displaySizeBytes < 1024 * 1024
+            ? `${(displaySizeBytes / 1024).toFixed(0)} KB`
+            : `${(displaySizeBytes / (1024 * 1024)).toFixed(1)} MB`;
 
         global.desktopAppUpdateStatus = {
             status: isNewer ? 'available' : 'up_to_date',
             updateAvailable: isNewer,
+            channel: selectedChannel,
             currentVersion,
             latestVersion: remoteVersion,
-            fileName: fullRelease.FileName || fullRelease.fileName,
-            sizeBytes: Number(fullRelease.Size || fullRelease.size || 0),
-            sizeMB: fullRelease.Size ? `${(Number(fullRelease.Size) / (1024 * 1024)).toFixed(1)} MB` : 'Unknown',
+            fileName: targetFull.FileName || targetFull.fileName,
+            sizeBytes: displaySizeBytes,
+            sizeMB: sizeDisplay,
+            updateType,
             percent: 0,
-            detail: isNewer ? `Versi baru v${remoteVersion} tersedia.` : `Aplikasi sudah versi terbaru (v${currentVersion}).`,
+            detail: isNewer ? `Versi baru v${remoteVersion} (${updateType}: ~${sizeDisplay}) tersedia.` : `Aplikasi sudah versi terbaru (v${currentVersion}).`,
             error: null,
             updatedAt: Date.now()
         };
 
-        console.log(`[Desktop Sync] Pengecekan versi selesai: v${currentVersion} -> v${remoteVersion} (Update tersedia: ${isNewer})`);
+        console.log(`[Desktop Sync] Pengecekan versi selesai (Channel: ${selectedChannel}): v${currentVersion} -> v${remoteVersion} (Update tersedia: ${isNewer})`);
 
         if (isNewer && autoInstall) {
             console.log(`[Desktop Sync] Memulai instalasi otomatis fallback untuk v${remoteVersion}...`);
             await runFallbackUpdater({
                 updateUrl,
+                channel: velopackChannel,
                 onProgress: (p) => {
                     global.desktopAppUpdateStatus.status = 'downloading';
                     global.desktopAppUpdateStatus.percent = p.percent || 0;

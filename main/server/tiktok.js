@@ -1,5 +1,6 @@
 import { WebSocket } from "ws";
 import { exit } from "process";
+import { TikTokLiveConnection } from "tiktok-live-connector";
 import { SendTheEffect, GenerateRandom, vehicleName, randomNess } from "./random.js";
 import { eVotingMode, ePickedVote, GeneralConfig, readJson, writeJson, APP_DATA_ROOT, OFFICIAL_USER_AGENT } from "./shared.js";
 import fs from "fs";
@@ -7,6 +8,9 @@ import path from "path";
 import axios from "axios";
 import { fetchIndofinityStatus, verifyTokenOwner, normalizeUsername } from "./indofinity.js";
 import { exclusiveManager } from "./exclusive.js";
+import { initializeGlobalTikTokProviderManager } from "./tiktok-provider-manager.js";
+import { TIKTOK_PROVIDERS } from "./tiktok-constants.js";
+import { createCustomSignerApiClient } from "./custom-tiktok-connector.js";
 
 let internal_Config = GeneralConfig.Tiktok;
 export let TikTokGatewayStatus = "Disconnected";
@@ -36,6 +40,9 @@ class TikTokHandler {
     giftQueueDelayMs = 250;
     lastTimerTick = Date.now();
     giftComboTracker = new Map();
+    giftComboCleanupTimers = new Map();
+    processedGiftMsgIds = new Map();
+    _tikfinityReconnectTimer = null;
     effectTimestamps = new Map(); // Pelacak waktu terima data awal dari Tikfinity
     lastVoteSseBroadcast = 0;
     lastPickedEffectName = "";
@@ -46,6 +53,8 @@ class TikTokHandler {
     ownerMismatched = false;
     mismatchReason = "";
     indofinityPollTimer = null;
+
+    tiktokLiveConn = null;
 
     constructor(
         wsServer,
@@ -66,10 +75,11 @@ class TikTokHandler {
         }
 
         this.tokenOwner = global.tokenOwner || global.gameClientOwner || internal_Config.owner || "";
-        this.startIndofinityPolling();
-
-        if (!internal_Config.TikfinityEnable) {
-            console.log("This Feature Currently not Available, Maybe in Someday this feature will Work");
+        this.providerManager = initializeGlobalTikTokProviderManager(this);
+        if (internal_Config.Provider === TIKTOK_PROVIDERS.CUSTOM_BETA) {
+            this.providerManager.setProvider(TIKTOK_PROVIDERS.CUSTOM_BETA, { saveConfig: false });
+        } else {
+            this.startIndofinityPolling();
         }
     }
 
@@ -81,7 +91,22 @@ class TikTokHandler {
             this.voteRemaining = this.voteCooldown;
         }
         this.reloadVoteConfig();
-        this.startIndofinityPolling();
+        const activeProvider = internal_Config.Provider || GeneralConfig?.General?.TiktokProvider || TIKTOK_PROVIDERS.INDOFINITY;
+        if (activeProvider === TIKTOK_PROVIDERS.CUSTOM_BETA) {
+            if (this.indofinityPollTimer) {
+                clearInterval(this.indofinityPollTimer);
+                this.indofinityPollTimer = null;
+            }
+            if (this.providerManager && this.providerManager.getProvider() !== TIKTOK_PROVIDERS.CUSTOM_BETA) {
+                this.providerManager.setProvider(TIKTOK_PROVIDERS.CUSTOM_BETA, { saveConfig: false });
+            }
+        } else {
+            this.startIndofinityPolling();
+            if (this.providerManager && this.providerManager.getProvider() !== TIKTOK_PROVIDERS.INDOFINITY) {
+                this.providerManager.setProvider(TIKTOK_PROVIDERS.INDOFINITY, { saveConfig: false });
+            }
+        }
+        this.SetupTiktok();
     }
 
     getVoteConfig() {
@@ -159,6 +184,9 @@ class TikTokHandler {
     setTokenOwner(owner) {
         this.tokenOwner = owner;
         global.tokenOwner = owner;
+        if (this.providerManager) {
+            this.providerManager.updateLicenseOwner(owner);
+        }
         if (this.indofinityStatus && this.indofinityStatus.uniqueId) {
             const verification = verifyTokenOwner(owner, this.indofinityStatus.uniqueId);
             this.setOwnerMismatch(!verification.match, verification.message);
@@ -380,6 +408,12 @@ class TikTokHandler {
         let count = this.giftEffectQueue.length;
         this.giftEffectQueue = [];
         this.giftComboTracker.clear();
+        if (this.giftComboCleanupTimers) {
+            for (const timer of this.giftComboCleanupTimers.values()) {
+                clearTimeout(timer);
+            }
+            this.giftComboCleanupTimers.clear();
+        }
         console.log(`[IMMUNE] Membersihkan ${count} antrean efek gift.`);
     }
 
@@ -623,8 +657,47 @@ class TikTokHandler {
         return delay;
     }
 
+    scheduleComboTrackerCleanup(trackerKey, delayMs = 1500) {
+        if (!this.giftComboCleanupTimers) {
+            this.giftComboCleanupTimers = new Map();
+        }
+        if (this.giftComboCleanupTimers.has(trackerKey)) {
+            clearTimeout(this.giftComboCleanupTimers.get(trackerKey));
+        }
+        const timer = setTimeout(() => {
+            this.giftComboTracker.delete(trackerKey);
+            this.giftComboCleanupTimers.delete(trackerKey);
+        }, delayMs);
+        this.giftComboCleanupTimers.set(trackerKey, timer);
+    }
+
     resolveGiftCount(data) {
-        let repeatEnd = data.repeatEnd;
+        if (!data || typeof data !== "object") {
+            return { shouldProcess: false, count: 0 };
+        }
+
+        // 1. Message ID / Event ID Deduplication (short-term cache)
+        const msgId = String(data.id ?? data.msgId ?? data.messageId ?? "").trim();
+        if (msgId) {
+            const now = Date.now();
+            if (!this.processedGiftMsgIds) {
+                this.processedGiftMsgIds = new Map();
+            }
+            if (this.processedGiftMsgIds.size > 300) {
+                for (const [k, ts] of this.processedGiftMsgIds.entries()) {
+                    if (now - ts > 30000) {
+                        this.processedGiftMsgIds.delete(k);
+                    }
+                }
+            }
+            if (this.processedGiftMsgIds.has(msgId)) {
+                console.log(`[TikTok Gift] Duplicate message ID ignored: ${msgId}`);
+                return { shouldProcess: false, count: 0 };
+            }
+            this.processedGiftMsgIds.set(msgId, now);
+        }
+
+        let isRepeatEnd = data.repeatEnd === true || data.repeatEnd === 1 || data.repeatEnd === "true";
         let repeatCountRaw = data ? (data.repeatCount != undefined ? data.repeatCount : data.repeat_count) : undefined;
         let repeatCount = Number(repeatCountRaw);
 
@@ -635,22 +708,27 @@ class TikTokHandler {
         console.log("RC:", repeatCount);
 
         const uniqueId = data.user?.uniqueId || data.uniqueId || data.userId || "unknown";
-        let trackerKey = `${uniqueId}:${data.giftId}`;
+        const giftId = data.giftId || data.id || "0";
+        const groupId = data.groupId || data.comboId || data.streakId || "";
+
+        let trackerKey = groupId ? `${uniqueId}:${giftId}:${groupId}` : `${uniqueId}:${giftId}`;
         let lastProcessedCount = this.giftComboTracker.get(trackerKey) || 0;
         let deltaCount = repeatCount - lastProcessedCount;
+
+        const cleanupDelay = groupId ? 10000 : 1500;
 
         if (deltaCount > 0) {
             this.giftComboTracker.set(trackerKey, repeatCount);
             
-            if (repeatEnd) {
-                this.giftComboTracker.delete(trackerKey);
+            if (isRepeatEnd) {
+                this.scheduleComboTrackerCleanup(trackerKey, cleanupDelay);
             }
 
             return { shouldProcess: true, count: deltaCount };
         }
 
-        if (repeatEnd) {
-            this.giftComboTracker.delete(trackerKey);
+        if (isRepeatEnd) {
+            this.scheduleComboTrackerCleanup(trackerKey, cleanupDelay);
         }
 
         return { shouldProcess: false, count: 0 };
@@ -1464,11 +1542,12 @@ class TikTokHandler {
             subtext: nickname || uniqueId,
         };
 
+        let giftCountInfo = null;
         if (
             !GeneralConfig.Tiktok.TikfinityHTTPServer &&
             GeneralConfig.Tiktok.TiktokForceEffect
         ) {
-            let giftCountInfo = this.resolveGiftCount(data);
+            giftCountInfo = this.resolveGiftCount(data);
             console.log("Gift Count Info", giftCountInfo);
 
             if (!giftCountInfo.shouldProcess) {
@@ -1633,11 +1712,16 @@ class TikTokHandler {
                 const basePoints = Math.max(1, parseInt(matchedRule.points || 1, 10));
                 let count = 1;
                 if (matchedRule.multiplyByCount !== false && voteCfg?.settings?.multiplyByStreak !== false) {
-                    try {
-                        let gInfo = this.resolveGiftCount(data);
-                        if (gInfo && gInfo.count) count = gInfo.count;
-                    } catch (e) {
-                        count = parseInt(data.repeatCount || data.count || 1, 10) || 1;
+                    if (giftCountInfo && typeof giftCountInfo.count === "number") {
+                        count = giftCountInfo.count;
+                    } else {
+                        try {
+                            let gInfo = this.resolveGiftCount(data);
+                            if (gInfo && gInfo.count) count = gInfo.count;
+                            else if (gInfo && !gInfo.shouldProcess) count = 0;
+                        } catch (e) {
+                            count = parseInt(data.repeatCount || data.count || 1, 10) || 1;
+                        }
                     }
                 }
                 const totalPoints = basePoints * count;
@@ -1691,35 +1775,64 @@ class TikTokHandler {
     }
 
     connectTikfinity() {
-        if (!internal_Config.TikfinityEnable) return;
+        if (!internal_Config.TikfinityEnable && !internal_Config.TiktokUseIndofinity) return;
         
-        TikTokGatewayStatus = "Connecting";
-        this.tiktokConnection = new WebSocket(
-            `ws://localhost:${
-                internal_Config.TiktokUseIndofinity == false ? 21213 : 62024
-            }/`
-        );
+        const targetPort = internal_Config.TiktokUseIndofinity == false ? 21213 : 62024;
+        const targetUrl = `ws://localhost:${targetPort}/`;
 
-        this.tiktokConnection.on("open", () => {
+        // Guard: Jika koneksi sudah aktif atau sedang connecting ke target URL yang sama, jangan buat socket baru
+        if (this.tiktokConnection) {
+            const state = this.tiktokConnection.readyState;
+            if (state === WebSocket.OPEN || state === WebSocket.CONNECTING) {
+                if (this.tiktokConnection._chaosTargetUrl === targetUrl) {
+                    console.log(`[TikTok Gateway] WebSocket already active/connecting to ${targetUrl}, skipping duplicate connection.`);
+                    return;
+                }
+            }
+            try {
+                this.tiktokConnection.removeAllListeners();
+                this.tiktokConnection.close();
+            } catch (e) {}
+            this.tiktokConnection = null;
+        }
+
+        if (this._tikfinityReconnectTimer) {
+            clearTimeout(this._tikfinityReconnectTimer);
+            this._tikfinityReconnectTimer = null;
+        }
+
+        TikTokGatewayStatus = "Connecting";
+        const ws = new WebSocket(targetUrl);
+        ws._chaosTargetUrl = targetUrl;
+        this.tiktokConnection = ws;
+
+        ws.on("open", () => {
+            if (this.tiktokConnection !== ws) return;
             TikTokGatewayStatus = "Connected";
             console.log(
                 `Connected to ${
                     internal_Config.TiktokUseIndofinity
                         ? "Indofinity"
                         : "Tikfinity"
-                } Server`
+                } Server (${targetUrl})`
             );
         });
 
         let donationPlatform = [ "saweria", "sociabuzz", "trakteer", "tako" ];
 
-        this.tiktokConnection.on("message", (data) => {
-            let wsData = JSON.parse(data);
+        ws.on("message", (data) => {
+            if (this.tiktokConnection !== ws) return;
+            let wsData;
+            try {
+                wsData = JSON.parse(data);
+            } catch (err) {
+                return;
+            }
             if (wsData.event == "chat") {
                 this.onMessage(wsData.data);
             } else if (wsData.event == "gift") {
                 this.onGift(wsData.data);
-            } else if (donationPlatform.some(platform => wsData.event.includes(platform))) {
+            } else if (donationPlatform.some(platform => wsData.event && wsData.event.includes(platform))) {
                 this.onDonation(wsData.data);
             } else if (wsData.event == "tiktokConnected" || wsData.event == "liveDetected") {
                 let detectedId = wsData.data?.roomInfo?.uniqueId || internal_Config.owner;
@@ -1730,45 +1843,239 @@ class TikTokHandler {
             }
         });
 
-        this.tiktokConnection.on("close", () => {
+        const scheduleReconnect = () => {
+            if (this._tikfinityReconnectTimer) return;
+            this._tikfinityReconnectTimer = setTimeout(() => {
+                this._tikfinityReconnectTimer = null;
+                const activeProv = internal_Config.Provider || GeneralConfig?.General?.TiktokProvider || TIKTOK_PROVIDERS.INDOFINITY;
+                if (activeProv !== TIKTOK_PROVIDERS.CUSTOM_BETA && internal_Config.TiktokEnable && (internal_Config.TikfinityEnable || internal_Config.TiktokUseIndofinity)) {
+                    this.connectTikfinity();
+                }
+            }, 5000);
+        };
+
+        ws.on("close", () => {
+            if (this.tiktokConnection === ws) {
+                this.tiktokConnection = null;
+            }
+            try {
+                ws.removeAllListeners();
+            } catch (e) {}
+
             if (TikTokGatewayStatus !== "Disconnected") {
                 TikTokGatewayStatus = "Disconnected";
                 console.log(`Connection to ${internal_Config.TiktokUseIndofinity ? "Indofinity" : "Tikfinity"} closed. Reconnecting in 5 seconds...`);
-                setTimeout(() => this.connectTikfinity(), 5000);
             }
+            scheduleReconnect();
         });
 
-        this.tiktokConnection.on("error", (err) => {
-            if(err.code == "ECONNREFUSED") {
+        ws.on("error", (err) => {
+            if (err.code == "ECONNREFUSED") {
                 console.log(`Connection Refused from Tiktok Interactive. Please make sure the ${internal_Config.TiktokUseIndofinity ? "Indofinity" : "Tikfinity"} is running.`);
-                TikTokGatewayStatus = "Disconnected";
-                setTimeout(() => this.connectTikfinity(), 5000);
+            } else {
+                console.warn("[TikTok Gateway] WebSocket error:", err.message || err);
             }
+            if (TikTokGatewayStatus !== "Disconnected") {
+                TikTokGatewayStatus = "Disconnected";
+            }
+            scheduleReconnect();
         });
     }
 
-    SetupTiktok() {
-        if (internal_Config.TikfinityEnable) {
-            this.connectTikfinity();
-        } else {
-            // Built-in library mode
-            this.tiktokConnection
-                .connect()
+    connectLiveConnector() {
+        if (!internal_Config.TiktokEnable) {
+            TikTokGatewayStatus = "Disconnected";
+            return;
+        }
+
+        // uniqueId : Username Tiktok (Dari Server)
+        const rawUsername = (internal_Config.TiktokUsername || internal_Config.owner || global.tokenOwner || global.currentLiveUser || "").trim();
+        const uniqueId = rawUsername.replace(/^@/, "").trim();
+
+        if (!uniqueId) {
+            console.warn("[TikTokLiveConnection] Username TikTok belum diisi di Tiktok Config.");
+            TikTokGatewayStatus = "Disconnected";
+            return;
+        }
+
+        if (this.tiktokLiveConn) {
+            try {
+                this.tiktokLiveConn.disconnect();
+            } catch (e) {}
+            this.tiktokLiveConn = null;
+        }
+
+        const sessionId = (internal_Config.TiktokSessionId || "").trim();
+        const ttTargetIdc = (internal_Config.TiktokTtTargetIdc || "").trim();
+
+        const options = {
+            processInitialData: false,
+            fetchRoomInfoOnConnect: true,
+            enableExtendedGiftInfo: true,
+            authenticateWs: internal_Config.TiktokAuthenticateWs !== false,
+        };
+
+        if (internal_Config.TiktokSignApiKey) {
+            options.signApiKey = internal_Config.TiktokSignApiKey.trim();
+        }
+
+        if (this.providerManager) {
+            options.eulerApiInstance = createCustomSignerApiClient({
+                signerTokenManager: this.providerManager.signerTokenManager,
+                authSessionManager: this.providerManager.authSessionManager,
+                signerBaseUrl: "https://signer.sa-chaos.id",
+            });
+        }
+
+        // Pass them via the session.cookie bundle
+        if (sessionId && ttTargetIdc) {
+            options.session = {
+                cookie: {
+                    type: "cookie",
+                    value: {
+                        sessionId: sessionId,
+                        ttTargetIdc: ttTargetIdc
+                    }
+                }
+            };
+        } else if (sessionId) {
+            options.sessionId = sessionId;
+        }
+
+        TikTokGatewayStatus = "Connecting";
+        console.log(`[TikTokLiveConnection] Menghubungkan ke @${uniqueId} (authenticateWs: ${options.authenticateWs}, session: ${!!(sessionId && ttTargetIdc)})...`);
+
+        try {
+            const connection = new TikTokLiveConnection(uniqueId, options);
+            this.tiktokLiveConn = connection;
+
+            connection.connect()
                 .then((state) => {
-                    internal_Config.owner = state.roomInfo.owner.display_id;
-                    console.info(`Connected to Tiktok Interactive to Room ${state.roomInfo.owner.nickname} with Room ID ${state.roomId}`);
+                    TikTokGatewayStatus = "Connected";
+                    this.isLive = true;
+                    const detectedOwner = state?.roomInfo?.owner?.display_id || uniqueId;
+                    internal_Config.owner = detectedOwner;
+                    global.currentLiveUser = detectedOwner;
+                    console.log("Connected to TikTok LIVE chat!");
+                    console.info(`[TikTokLiveConnection] Connected to TikTok LIVE Room: ${state?.roomInfo?.owner?.nickname || detectedOwner} (Room ID: ${state?.roomId || 'unknown'})`);
                 })
                 .catch((err) => {
-                    console.error("Failed to connect", err);
+                    TikTokGatewayStatus = "Disconnected";
+                    console.error("[TikTokLiveConnection] Failed to connect to TikTok LIVE:", err?.message || err);
+                    if (this._liveConnRetryTimer) {
+                        clearTimeout(this._liveConnRetryTimer);
+                    }
+                    this._liveConnRetryTimer = setTimeout(() => {
+                        const currentProv = internal_Config.Provider || GeneralConfig?.General?.TiktokProvider || TIKTOK_PROVIDERS.INDOFINITY;
+                        if (currentProv !== TIKTOK_PROVIDERS.INDOFINITY && !internal_Config.TikfinityEnable && internal_Config.TiktokEnable && this.tiktokLiveConn === connection) {
+                            this.connectLiveConnector();
+                        }
+                    }, 10000);
                 });
 
-            this.tiktokConnection.on("chat", (data) => {
+            connection.on("chat", (data) => {
                 this.onMessage(data);
             });
 
-            this.tiktokConnection.on("gift", (data) => {
+            connection.on("gift", (data) => {
                 this.onGift(data);
             });
+
+            connection.on("disconnected", () => {
+                console.log("[TikTokLiveConnection] Disconnected from TikTok LIVE chat.");
+                if (TikTokGatewayStatus !== "Disconnected") {
+                    TikTokGatewayStatus = "Disconnected";
+                }
+                setTimeout(() => {
+                    if (!internal_Config.TikfinityEnable && internal_Config.TiktokEnable) {
+                        this.connectLiveConnector();
+                    }
+                }, 5000);
+            });
+
+            connection.on("streamEnd", () => {
+                console.log("[TikTokLiveConnection] Stream telah berakhir.");
+                TikTokGatewayStatus = "Disconnected";
+                this.isLive = false;
+            });
+
+            connection.on("error", (err) => {
+                console.error("[TikTokLiveConnection] Error:", err?.message || err);
+            });
+
+        } catch (err) {
+            TikTokGatewayStatus = "Disconnected";
+            console.error("[TikTokLiveConnection] Setup error:", err);
+        }
+    }
+
+    SetupTiktok() {
+        if (!internal_Config.TiktokEnable) {
+            TikTokGatewayStatus = "Disconnected";
+            if (this._tikfinityReconnectTimer) {
+                clearTimeout(this._tikfinityReconnectTimer);
+                this._tikfinityReconnectTimer = null;
+            }
+            if (this.tiktokConnection) {
+                try {
+                    this.tiktokConnection.removeAllListeners();
+                    this.tiktokConnection.close();
+                } catch (e) {}
+                this.tiktokConnection = null;
+            }
+            if (this.tiktokLiveConn) {
+                try { this.tiktokLiveConn.disconnect(); } catch (e) {}
+                this.tiktokLiveConn = null;
+            }
+            if (this.providerManager) {
+                this.providerManager.customConnector.disconnect();
+                this.providerManager.liveMonitor.stopMonitoring();
+            }
+            return;
+        }
+
+        const activeProvider = internal_Config.Provider || GeneralConfig?.General?.TiktokProvider || TIKTOK_PROVIDERS.INDOFINITY;
+        if (activeProvider === TIKTOK_PROVIDERS.CUSTOM_BETA) {
+            // Close any active IndoFinity connection
+            if (this._tikfinityReconnectTimer) {
+                clearTimeout(this._tikfinityReconnectTimer);
+                this._tikfinityReconnectTimer = null;
+            }
+            if (this.tiktokConnection) {
+                try {
+                    this.tiktokConnection.removeAllListeners();
+                    this.tiktokConnection.close();
+                } catch (e) {}
+                this.tiktokConnection = null;
+            }
+            if (this.tiktokLiveConn) {
+                try { this.tiktokLiveConn.disconnect(); } catch (e) {}
+                this.tiktokLiveConn = null;
+            }
+            if (this.providerManager && this.providerManager.getProvider() !== TIKTOK_PROVIDERS.CUSTOM_BETA) {
+                this.providerManager.setProvider(TIKTOK_PROVIDERS.CUSTOM_BETA, { saveConfig: false });
+            }
+            return;
+        }
+
+        // When in IndoFinity mode, ensure Custom Beta and old connector are stopped
+        if (this.providerManager) {
+            this.providerManager.customConnector.disconnect();
+            this.providerManager.liveMonitor.stopMonitoring();
+        }
+
+        if (this.tiktokLiveConn) {
+            try { this.tiktokLiveConn.disconnect(); } catch (e) {}
+            this.tiktokLiveConn = null;
+        }
+        if (this._liveConnRetryTimer) {
+            clearTimeout(this._liveConnRetryTimer);
+            this._liveConnRetryTimer = null;
+        }
+
+        // IndoFinity connects via local desktop WebSocket (port 62024 or 21213)
+        if (internal_Config.TiktokUseIndofinity || internal_Config.TikfinityEnable) {
+            this.connectTikfinity();
         }
     }
 }

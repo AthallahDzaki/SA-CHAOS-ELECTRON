@@ -1,5 +1,10 @@
 import { dialog, app } from 'electron';
+import path from 'path';
 import { launchIndofinityApp } from './server/indofinity.js';
+import { captureTikTokCookies } from './server/tiktok-cookie.js';
+import { globalTikTokAuthManager } from './server/tiktok-auth-session.js';
+import { resolveUpdateChannel, checkAndSyncDesktopApp } from './server/updater.js';
+import { GeneralConfig, writeJson, APP_DATA_ROOT } from './server/shared.js';
 import {
   getGlobalP2PStatus,
   updateGlobalP2PConfig,
@@ -129,6 +134,101 @@ export function setupIpcHandlers(ipcMain, mainWindow, getPort) {
     try {
       const result = await probeP2PReadiness();
       return { status: 'success', readiness: result };
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
+  });
+
+  ipcMain.handle('tiktok:capture-cookies', async () => {
+    try {
+      return await captureTikTokCookies(mainWindow);
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
+  });
+
+  ipcMain.handle('tiktok:get-provider-status', async () => {
+    try {
+      if (global.TikTokProviderManager) {
+        return { status: 'success', data: global.TikTokProviderManager.getStatus() };
+      }
+      return { status: 'success', data: { selectedProvider: 'indofinity', channel: 'Stable' } };
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
+  });
+
+  ipcMain.handle('tiktok:switch-provider', async (_event, provider) => {
+    try {
+      const clean = String(provider).toLowerCase() === 'custom_beta' ? 'custom_beta' : 'indofinity';
+      if (global.TikTokProviderManager) {
+        await global.TikTokProviderManager.setProvider(clean);
+      }
+      return { status: 'success', provider: clean };
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
+  });
+
+  ipcMain.handle('tiktok:logout', async () => {
+    try {
+      await globalTikTokAuthManager.clearSession();
+      if (global.TikTokProviderManager && global.TikTokProviderManager.getProvider() === 'custom_beta') {
+        global.TikTokProviderManager.customConnector.disconnect();
+      }
+      return { status: 'success' };
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
+  });
+
+  ipcMain.handle('updater:get-channel', async () => {
+    try {
+      const channel = resolveUpdateChannel(GeneralConfig);
+      return {
+        status: 'success',
+        channel,
+        channels: [
+          {
+            id: 'release',
+            name: 'Release (Stable)',
+            description: 'Channel rilis resmi stabil, direkomendasikan untuk live streaming sehari-hari.'
+          },
+          {
+            id: 'beta',
+            name: 'Beta (Fitur Lebih Awal)',
+            description: 'Channel pengujian awal dengan fitur terbaru lebih cepat. Tidak menjamin kestabilan dan mungkin mengandung error.'
+          }
+        ]
+      };
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
+  });
+
+  ipcMain.handle('updater:set-channel', async (_event, targetChannel) => {
+    try {
+      const target = String(targetChannel).trim().toLowerCase() === 'beta' ? 'beta' : 'release';
+      if (!GeneralConfig.General) GeneralConfig.General = {};
+      GeneralConfig.General.UpdateChannel = target;
+      writeJson(path.join(APP_DATA_ROOT, 'config.json'), GeneralConfig);
+
+      try {
+        const orch = getGlobalP2POrchestrator();
+        if (orch && typeof orch.updateConfig === 'function') {
+          await orch.updateConfig({ channel: target === 'beta' ? 'beta' : 'win' });
+        }
+      } catch (err) {
+        console.warn('[IPC] Channel update to P2P orchestrator warning:', err.message);
+      }
+
+      mainWindow.webContents.send('updater:channel-changed', target);
+      // Trigger background check for updates under the newly selected channel
+      checkAndSyncDesktopApp(false).catch((err) => {
+        console.warn('[IPC] Desktop update check error on channel switch:', err.message);
+      });
+
+      return { status: 'success', channel: target };
     } catch (error) {
       return { status: 'error', message: error.message };
     }

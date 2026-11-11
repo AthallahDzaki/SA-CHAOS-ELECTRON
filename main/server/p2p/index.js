@@ -101,7 +101,9 @@ let globalOrchestrator = null;
 export function readPersistedP2PSettings() {
   const cfg = readJson(CONFIG_FILE_PATH, GeneralConfig || {});
   const gen = (cfg && cfg.General) || (GeneralConfig && GeneralConfig.General) || {};
+  const channel = String(gen.UpdateChannel || 'release').toLowerCase() === 'beta' ? 'beta' : 'win';
   return {
+    channel,
     p2pUpdaterEnabled: Boolean(gen.p2pUpdaterEnabled ?? false),
     p2pUpdaterConsentAccepted: Boolean(gen.p2pUpdaterConsentAccepted ?? false),
     p2pSeedingEnabled: Boolean(gen.p2pSeedingEnabled ?? false),
@@ -174,6 +176,7 @@ export function getGlobalP2POrchestrator() {
     const initialConfig = readPersistedP2PSettings();
     globalOrchestrator = new HybridUpdateOrchestrator({
       dataDir: APP_DATA_ROOT,
+      channel: initialConfig.channel || 'win',
       initialConfig
     });
     // If user previously opted into both P2P and seeding, start background seeding listener safely

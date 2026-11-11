@@ -5,8 +5,12 @@ import axios from "axios";
 import fileUpload from "express-fileupload";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, unlinkSync, copyFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { readJson, writeJson, APP_DATA_ROOT, OFFICIAL_USER_AGENT } from "./shared.js";
+import { readJson, writeJson, APP_DATA_ROOT, OFFICIAL_USER_AGENT, GeneralConfig } from "./shared.js";
 import { fetchIndofinityStatus, extractIndofinityToken, verifyTokenOwner, normalizeUsername, launchIndofinityApp } from "./indofinity.js";
+import { captureTikTokCookies } from "./tiktok-cookie.js";
+import { globalTikTokAuthManager } from "./tiktok-auth-session.js";
+import { globalTikTokProviderManager } from "./tiktok-provider-manager.js";
+import { TIKTOK_PROVIDERS } from "./tiktok-constants.js";
 import { getLatestHeartbeatData, runHeartbeatCheck } from "./heartbeat.js";
 import { exclusiveManager } from "./exclusive.js";
 
@@ -34,6 +38,7 @@ const PRODUCT_KEYS = Object.freeze({
   CLASSIC: "SA-CHAOS-CLASSIC",
   SONIC: "SA-CHAOS-SONIC",
   MOUNTAIN: "SA-CHAOS-MOUNTAIN",
+  VICECITY: "SA-CHAOS-VICECITY",
   UNKNOWN: "UNKNOWN",
 });
 
@@ -46,7 +51,27 @@ const PRODUCT_EFFECT_JSON_URL = Object.freeze({
     "https://raw.githubusercontent.com/AthallahDzaki/SA-CHAOS-EFFECT-LIST/refs/heads/sonic/effects.json",
   [PRODUCT_KEYS.MOUNTAIN]:
     "https://raw.githubusercontent.com/AthallahDzaki/SA-CHAOS-EFFECT-LIST/refs/heads/mountain/effects.json",
+  [PRODUCT_KEYS.VICECITY]:
+    "https://raw.githubusercontent.com/AthallahDzaki/SA-CHAOS-EFFECT-LIST/refs/heads/vicecity/effects.json",
 });
+
+function resolveProductEffectUrl(productKey) {
+  const normalizedKey = normalizeProductKey(productKey);
+  if (PRODUCT_EFFECT_JSON_URL[normalizedKey]) {
+    return PRODUCT_EFFECT_JSON_URL[normalizedKey];
+  }
+  if (PRODUCT_EFFECT_JSON_URL[productKey]) {
+    return PRODUCT_EFFECT_JSON_URL[productKey];
+  }
+  if (!normalizedKey || normalizedKey === PRODUCT_KEYS.UNKNOWN) {
+    return "";
+  }
+  const branchCandidate = String(normalizedKey)
+    .toLowerCase()
+    .replace(/^sa-chaos-/, "")
+    .replace(/[^a-z0-9_\-\.\/]/g, "-");
+  return `https://raw.githubusercontent.com/AthallahDzaki/SA-CHAOS-EFFECT-LIST/refs/heads/${branchCandidate}/effects.json`;
+}
 
 const DEFAULT_COMBO_CONFIG = Object.freeze({
   BetaEnabled: false,
@@ -74,6 +99,10 @@ function normalizeProductKey(rawValue) {
     return PRODUCT_KEYS.UNKNOWN;
   }
 
+  if (value.includes("VICE") || value.includes("VC")) {
+    return PRODUCT_KEYS.VICECITY;
+  }
+
   if (value.includes("SONIC")) {
     return PRODUCT_KEYS.SONIC;
   }
@@ -88,6 +117,11 @@ function normalizeProductKey(rawValue) {
 
   if (value.includes("MOUNTAIN")) {
     return PRODUCT_KEYS.MOUNTAIN;
+  }
+
+  // Dynamic product detection (e.g. SA-CHAOS-NEWPRODUCT, etc.)
+  if (value.startsWith("SA-CHAOS-") || value.length >= 3) {
+    return value.startsWith("SA-CHAOS-") ? value : `SA-CHAOS-${value}`;
   }
 
   return PRODUCT_KEYS.UNKNOWN;
@@ -360,10 +394,12 @@ export class LocalConfigHandler {
     router.post("/trigger-desktop-update", async (req, res) => {
       console.log("[LocalConfig] Menerima permintaan manual trigger update desktop app...");
       const updateUrl = `https://updater.sa-chaos.my.id/velopack.php/`;
+      const selectedChannel = String(GeneralConfig?.General?.UpdateChannel || "release").toLowerCase() === "beta" ? "beta" : "win";
       
       // Jalankan proses update di background agar response HTTP tidak hanging
       runFallbackUpdater({
         updateUrl,
+        channel: selectedChannel,
         onProgress: (p) => {
           if (!global.desktopAppUpdateStatus) global.desktopAppUpdateStatus = {};
           global.desktopAppUpdateStatus.status = "downloading";
@@ -1329,6 +1365,76 @@ export class LocalConfigHandler {
 
 
 
+    router.get("/tiktok-provider/status", (req, res) => {
+      try {
+        const status = global.TikTokProviderManager
+          ? global.TikTokProviderManager.getStatus()
+          : {
+              selectedProvider: TIKTOK_PROVIDERS.INDOFINITY,
+              channel: "Stable",
+              isCustomBeta: false,
+              roomStatus: "unknown",
+              connectionStatus: "disconnected",
+            };
+        return res.json({ status: "success", data: status });
+      } catch (err) {
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
+    router.post("/tiktok-provider/switch", async (req, res) => {
+      try {
+        const target = req.body?.provider;
+        const clean = String(target).toLowerCase() === "custom_beta" ? TIKTOK_PROVIDERS.CUSTOM_BETA : TIKTOK_PROVIDERS.INDOFINITY;
+        if (global.TikTokProviderManager) {
+          await global.TikTokProviderManager.setProvider(clean);
+        }
+        return res.json({
+          status: "success",
+          provider: clean,
+          data: global.TikTokProviderManager ? global.TikTokProviderManager.getStatus() : null,
+        });
+      } catch (err) {
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
+    router.get("/tiktok-auth/status", (req, res) => {
+      try {
+        return res.json({
+          status: "success",
+          data: {
+            authenticated: globalTikTokAuthManager.isAuthenticated(),
+            connectedAs: globalTikTokAuthManager.getConnectedAs(),
+            authState: globalTikTokAuthManager.authState,
+          },
+        });
+      } catch (err) {
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
+    router.post("/tiktok-auth/login", async (req, res) => {
+      try {
+        const result = await globalTikTokAuthManager.openLoginWindow(global.mainWindowInstance);
+        return res.json({ status: "success", result });
+      } catch (err) {
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
+    router.post("/tiktok-auth/logout", async (req, res) => {
+      try {
+        await globalTikTokAuthManager.clearSession();
+        if (global.TikTokProviderManager && global.TikTokProviderManager.getProvider() === TIKTOK_PROVIDERS.CUSTOM_BETA) {
+          global.TikTokProviderManager.customConnector.disconnect();
+        }
+        return res.json({ status: "success", message: "TikTok session cleared." });
+      } catch (err) {
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
     router.get("/indofinity/status", async (req, res) => {
       try {
         const force = req.query.force === "true" || req.query.refresh === "true";
@@ -1760,6 +1866,33 @@ export class LocalConfigHandler {
         }
       }
 
+      const reqChannel = req.body["update_channel"] ?? req.body["updateChannel"] ?? req.body["update-channel"];
+      if (reqChannel != undefined) {
+        const cleanChannel = String(reqChannel).trim().toLowerCase() === "beta" ? "beta" : "release";
+        general.UpdateChannel = cleanChannel;
+        if (GeneralConfig && GeneralConfig.General) {
+          GeneralConfig.General.UpdateChannel = cleanChannel;
+        }
+      }
+
+      const reqProvider = req.body["tiktok_provider"] ?? req.body["tiktok-provider"] ?? req.body["tiktokProvider"];
+      if (reqProvider != undefined) {
+        const cleanProvider = String(reqProvider).toLowerCase() === "custom_beta" ? TIKTOK_PROVIDERS.CUSTOM_BETA : TIKTOK_PROVIDERS.INDOFINITY;
+        if (!config.Tiktok) config.Tiktok = {};
+        config.Tiktok.Provider = cleanProvider;
+        general.TiktokProvider = cleanProvider;
+        if (cleanProvider === TIKTOK_PROVIDERS.INDOFINITY) {
+          config.Tiktok.TiktokUseIndofinity = true;
+        } else {
+          config.Tiktok.TiktokUseIndofinity = false;
+        }
+        if (global.TikTokProviderManager) {
+          global.TikTokProviderManager.setProvider(cleanProvider).catch((e) =>
+            console.warn("[LocalConfig] Provider switch warning:", e.message)
+          );
+        }
+      }
+
       this.ensureConfigShape(config);
       this.writeJSON(this.configPath, config);
       if (Object.keys(p2pUpdates).length > 0) {
@@ -1903,6 +2036,73 @@ export class LocalConfigHandler {
       }
     });
 
+    router.get("/update-channel", (req, res) => {
+      const config = this.getConfig();
+      const currentChannel = String(config?.General?.UpdateChannel || "release").toLowerCase() === "beta" ? "beta" : "release";
+      return res.json({
+        status: "success",
+        channel: currentChannel,
+        channels: [
+          {
+            id: "release",
+            name: "Release (Stable)",
+            description: "Channel rilis resmi stabil, direkomendasikan untuk gameplay dan live streaming sehari-hari."
+          },
+          {
+            id: "beta",
+            name: "Beta (Fitur Lebih Awal)",
+            description: "Channel pengujian awal dengan fitur terbaru lebih cepat. Tidak menjamin kestabilan dan mungkin mengandung error."
+          }
+        ]
+      });
+    });
+
+    router.post("/set-update-channel", async (req, res) => {
+      const target = String(req.body?.channel || req.body?.update_channel || "").toLowerCase().trim();
+      if (target !== "beta" && target !== "release") {
+        return res.status(400).json({
+          status: "error",
+          message: "Channel tidak valid. Pilihan yang valid: 'release' atau 'beta'."
+        });
+      }
+
+      const config = this.getConfig();
+      if (!config.General) config.General = {};
+      config.General.UpdateChannel = target;
+      if (GeneralConfig && GeneralConfig.General) {
+        GeneralConfig.General.UpdateChannel = target;
+      }
+      this.ensureConfigShape(config);
+      this.writeJSON(this.configPath, config);
+
+      try {
+        const orch = getGlobalP2POrchestrator();
+        if (orch && typeof orch.updateConfig === "function") {
+          await orch.updateConfig({ channel: target === "beta" ? "beta" : "win" });
+        }
+      } catch (err) {
+        console.warn("[LocalConfig] P2P channel update warning:", err.message);
+      }
+
+      // Trigger background check for new channel
+      checkAndSyncDesktopApp(false).catch((err) => {
+        console.warn("[LocalConfig] Desktop update re-check error:", err.message);
+      });
+
+      this.emitUpdate("config", {
+        source: "set-update-channel",
+        config
+      });
+
+      return res.json({
+        status: "success",
+        channel: target,
+        message: target === "beta"
+          ? "Berhasil beralih ke Channel Beta (Fitur Lebih Awal)."
+          : "Berhasil beralih ke Channel Release (Stable)."
+      });
+    });
+
     router.post("/set-game-mode", (req, res) => {
       let config = this.getConfig();
       if (!config.Tiktok) {
@@ -1971,6 +2171,26 @@ export class LocalConfigHandler {
       });
     });
 
+    router.post("/tiktok/capture-cookies", async (req, res) => {
+      try {
+        const result = await captureTikTokCookies(global.mainWindowInstance);
+        return res.json(result);
+      } catch (err) {
+        console.error("[capture-cookies route error]", err);
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
+    router.get("/tiktok/capture-cookies", async (req, res) => {
+      try {
+        const result = await captureTikTokCookies(global.mainWindowInstance);
+        return res.json(result);
+      } catch (err) {
+        console.error("[capture-cookies route error]", err);
+        return res.status(500).json({ status: "error", message: err.message });
+      }
+    });
+
     router.post("/handle-tiktok-config", (req, res) => {
       let config = this.getConfig();
       if (!config.Tiktok) {
@@ -2001,6 +2221,24 @@ export class LocalConfigHandler {
 
       if (req.body["session"] != undefined) {
         tiktok.TiktokSessionId = req.body["session"];
+      }
+
+      if (req.body["tt-target-idc"] != undefined) {
+        tiktok.TiktokTtTargetIdc = String(req.body["tt-target-idc"] || "").trim();
+      } else if (req.body["ttTargetIdc"] != undefined) {
+        tiktok.TiktokTtTargetIdc = String(req.body["ttTargetIdc"] || "").trim();
+      }
+
+      if (req.body["sign-api-key"] != undefined) {
+        tiktok.TiktokSignApiKey = String(req.body["sign-api-key"] || "").trim();
+      } else if (req.body["signApiKey"] != undefined) {
+        tiktok.TiktokSignApiKey = String(req.body["signApiKey"] || "").trim();
+      }
+
+      if (req.body["authenticate-ws"] != undefined) {
+        tiktok.TiktokAuthenticateWs = req.body["authenticate-ws"] === "true" || req.body["authenticate-ws"] === true;
+      } else if (req.body["authenticateWs"] != undefined) {
+        tiktok.TiktokAuthenticateWs = req.body["authenticateWs"] === "true" || req.body["authenticateWs"] === true;
       }
 
       if (req.body["enable-vote"] != undefined) {
@@ -2064,6 +2302,10 @@ export class LocalConfigHandler {
         source: "handle-tiktok-config",
         config,
       });
+
+      if (global.TiktokHandler && typeof global.TiktokHandler.reloadConfigFromGeneral === "function") {
+        global.TiktokHandler.reloadConfigFromGeneral();
+      }
 
       return res.json({ status: "success" });
     });
@@ -2417,6 +2659,7 @@ export class LocalConfigHandler {
       "/config/get-saweria-effect",
       "/config/handle-general-config",
       "/config/handle-tiktok-config",
+      "/config/tiktok/capture-cookies",
       "/config/set-game-mode",
       "/config/handle-gift-config",
       "/config/handle-goal-config",
@@ -2693,7 +2936,7 @@ export class LocalConfigHandler {
   async syncEffectsFromGithub(reason = "interval") {
     let config = this.getConfig();
     let productKey = this.resolveProductKey(config);
-    let effectUrl = PRODUCT_EFFECT_JSON_URL[productKey];
+    let effectUrl = resolveProductEffectUrl(productKey);
 
     if (!effectUrl) {
       this.lastSyncMeta = {
@@ -3167,6 +3410,28 @@ export class LocalConfigHandler {
 
     if (!config.Tiktok || typeof config.Tiktok !== "object" || Array.isArray(config.Tiktok)) {
       config.Tiktok = {};
+      changed = true;
+    }
+
+    if (config.Tiktok.Provider === undefined) {
+      config.Tiktok.Provider = TIKTOK_PROVIDERS.INDOFINITY;
+      changed = true;
+    }
+    if (config.General.TiktokProvider === undefined) {
+      config.General.TiktokProvider = config.Tiktok.Provider || TIKTOK_PROVIDERS.INDOFINITY;
+      changed = true;
+    }
+
+    if (config.Tiktok.TiktokTtTargetIdc === undefined) {
+      config.Tiktok.TiktokTtTargetIdc = "";
+      changed = true;
+    }
+    if (config.Tiktok.TiktokSignApiKey === undefined) {
+      config.Tiktok.TiktokSignApiKey = "";
+      changed = true;
+    }
+    if (config.Tiktok.TiktokAuthenticateWs === undefined) {
+      config.Tiktok.TiktokAuthenticateWs = true;
       changed = true;
     }
 

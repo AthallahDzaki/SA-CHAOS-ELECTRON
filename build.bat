@@ -97,6 +97,14 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b %ERRORLEVEL%
 )
 
+:: Bersihkan binary non-Windows (VfusionNix & VfusionMac) agar vpk pack lancar
+if exist "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionNix" (
+    del /f /q "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionNix" >nul 2>&1
+)
+if exist "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionMac" (
+    del /f /q "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionMac" >nul 2>&1
+)
+
 echo.
 echo ================================================================
 echo  BUILD BERHASIL SELESAI!

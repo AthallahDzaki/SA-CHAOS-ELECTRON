@@ -1,4 +1,4 @@
-﻿import { fetchIndofinityStatus, verifyTokenOwner } from "./indofinity.js";
+import { fetchIndofinityStatus, verifyTokenOwner } from "./indofinity.js";
 import { GeneralConfig } from "./shared.js";
 
 let heartbeatTimer = null;
@@ -22,6 +22,68 @@ let previousMismatchState = null;
 export async function runHeartbeatCheck(options = {}) {
   const wsServer = options.wsServer || global.wsServerInstance;
   const config = options.config || GeneralConfig;
+
+  // Custom Beta mode: derive heartbeat from Custom TikTok Provider Manager
+  const provider = config?.Tiktok?.Provider || config?.General?.TiktokProvider || "indofinity";
+  if (provider === "custom_beta" && global.TikTokProviderManager) {
+    try {
+      const customStatus = global.TikTokProviderManager.getStatus();
+      const effectiveOwner = global.tokenOwner || global.gameClientOwner || config?.Tiktok?.owner || "";
+      const isLive = customStatus.roomStatus === "live";
+      const isConn = customStatus.connectionStatus === "connected";
+
+      lastHeartbeatData = {
+        ok: true,
+        connected: isConn,
+        live: isLive,
+        uniqueId: effectiveOwner,
+        loggedIn: Boolean(customStatus.isAuthenticated),
+        owner: effectiveOwner,
+        matched: true,
+        verificationMessage: "SA-CHAOS Custom Beta terhubung langsung ke TikTok LIVE.",
+        lastCheck: Date.now(),
+        error: customStatus.error || null,
+        raw: customStatus
+      };
+
+      global.isLive = isLive;
+      global.currentLiveUser = effectiveOwner;
+      global.heartbeatStatus = lastHeartbeatData;
+
+      if (global.TiktokHandler) {
+        global.TiktokHandler.isLive = isLive;
+      }
+
+      // Broadcast heartbeat to connected Game Client(s) via WebSockets
+      if (wsServer && wsServer.clients) {
+        const heartbeatPayload = JSON.stringify({
+          type: "heartbeat",
+          live: isLive,
+          uniqueId: effectiveOwner,
+          owner: effectiveOwner,
+          matched: true,
+          message: lastHeartbeatData.verificationMessage,
+          timestamp: Date.now()
+        });
+
+        wsServer.clients.forEach((client) => {
+          try {
+            if (client.readyState === 1) client.send(heartbeatPayload);
+          } catch {}
+        });
+      }
+
+      if (global.mainWindowInstance && !global.mainWindowInstance.isDestroyed()) {
+        try {
+          global.mainWindowInstance.webContents.send("heartbeat:update", lastHeartbeatData);
+        } catch (e) {}
+      }
+
+      return lastHeartbeatData;
+    } catch (e) {
+      console.warn("[Heartbeat 30s] Custom Beta status check error:", e.message);
+    }
+  }
 
   try {
     const status = await fetchIndofinityStatus({ config });

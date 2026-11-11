@@ -1,5 +1,5 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
 cd /d "%~dp0"
 
 echo ========================================================
@@ -27,19 +27,27 @@ echo.
 
 :: 2. Validasi Binary Unpacked
 if not exist "dist\win-unpacked\SA-CHAOS.exe" (
-    echo [ERROR] Folder 'dist\win-unpacked' belum siap atau file SA-CHAOS.exe tidak ditemukan!
+    echo [ERROR] Folder 'dist\win-unpacked' belum siap atau file SA-CHAOS.exe tidak ditemukan.
     echo Silakan jalankan 'build.bat' terlebih dahulu untuk mengompilasi aplikasi.
     echo.
     pause
     exit /b 1
 )
 
+:: 2.5 Bersihkan binary non-Windows (VfusionNix & VfusionMac) agar vpk pack tidak error
+if exist "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionNix" (
+    del /f /q "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionNix" >nul 2>&1
+)
+if exist "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionMac" (
+    del /f /q "dist\win-unpacked\resources\app.asar.unpacked\node_modules\velopack\bin\VfusionMac" >nul 2>&1
+)
+
 :: 3. Packaging dengan Velopack
 echo [1/4] Packaging dengan Velopack v%APP_VERSION%...
-call vpk pack -u SA-CHAOS -v %APP_VERSION% -p dist\win-unpacked -e SA-CHAOS.exe -o Releases
+call vpk pack -u SA-CHAOS -v %APP_VERSION% -p dist\win-unpacked -e SA-CHAOS.exe -o Releases --exclude "(.*\.pdb|.*VfusionNix|.*VfusionMac)"
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [ERROR] Gagal melakukan packaging dengan Velopack!
+    echo [ERROR] Gagal melakukan packaging dengan Velopack.
     pause
     exit /b %ERRORLEVEL%
 )
@@ -57,7 +65,7 @@ call vpk upload s3 ^
   --keepMaxReleases 3
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [ERROR] Gagal mengunggah paket update ke S3!
+    echo [ERROR] Gagal mengunggah paket update ke S3.
     pause
     exit /b %ERRORLEVEL%
 )
@@ -68,7 +76,7 @@ echo [3/4] Mengunggah Changelog ke CloudHost S3...
 call node upload-changelog.js
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [ERROR] Gagal mengunggah changelog ke S3!
+    echo [ERROR] Gagal mengunggah changelog ke S3.
     pause
     exit /b %ERRORLEVEL%
 )
@@ -89,7 +97,7 @@ call node scripts/publish-p2p-release.js ^
 
 echo.
 echo ================================================================
-echo  SUKSES! SA-CHAOS v%APP_VERSION% BERHASIL DIRILIS LENGKAP:
+echo  SUKSES: SA-CHAOS v%APP_VERSION% BERHASIL DIRILIS LENGKAP
 echo  1. CloudHost S3 (Paket Update + Changelog + Sidecar)
 echo  2. VPS Ubuntu Seeder (Dual-Stack P2P Seeder aktif)
 echo ================================================================

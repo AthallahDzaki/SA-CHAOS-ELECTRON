@@ -186,6 +186,12 @@ if (!gotTheLock) {
   });
 }
 
+app.on('before-quit', () => {
+  if (global.TikTokProviderManager && typeof global.TikTokProviderManager.dispose === 'function') {
+    global.TikTokProviderManager.dispose();
+  }
+});
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();

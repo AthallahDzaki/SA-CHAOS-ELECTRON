@@ -13,6 +13,7 @@ import { uploadFileToS3 } from '../upload-s3-artifacts.js';
 
 function parseArgs(argv) {
   const args = {
+    channel: 'win',
     releasesDir: path.resolve(process.cwd(), 'Releases'),
     privateKeyPath:
       process.env.P2P_PUBLISHER_PRIVATE_KEY_PATH ||
@@ -35,6 +36,7 @@ function parseArgs(argv) {
   for (let i = 2; i < argv.length; i++) {
     const token = argv[i];
     if (token === '--generate-keys') args.generateKeys = true;
+    else if ((token === '--channel' || token === '-c') && argv[i + 1]) args.channel = argv[++i];
     else if (token === '--key-dir' && argv[i + 1]) args.keyDir = path.resolve(argv[++i]);
     else if (token === '--releases-dir' && argv[i + 1]) args.releasesDir = path.resolve(argv[++i]);
     else if (token === '--private-key' && argv[i + 1]) args.privateKeyPath = path.resolve(argv[++i]);
@@ -73,9 +75,10 @@ async function run() {
     return;
   }
 
-  const releasesJsonPath = path.join(args.releasesDir, 'releases.win.json');
+  const releasesJsonName = `releases.${args.channel}.json`;
+  const releasesJsonPath = path.join(args.releasesDir, releasesJsonName);
   if (!fs.existsSync(releasesJsonPath)) {
-    throw new Error(`releases.win.json not found at ${releasesJsonPath}`);
+    throw new Error(`${releasesJsonName} not found at ${releasesJsonPath}`);
   }
 
   if (!fs.existsSync(args.privateKeyPath)) {
@@ -95,7 +98,7 @@ async function run() {
   const deltaAssets = assets.filter((a) => String(a.Type).toLowerCase() === 'delta');
 
   if (fullAssets.length === 0) {
-    throw new Error('No Full package asset found in releases.win.json');
+    throw new Error(`No Full package asset found in ${releasesJsonName}`);
   }
 
   const targetAsset = args.version
@@ -103,7 +106,7 @@ async function run() {
     : fullAssets[0];
 
   if (!targetAsset) {
-    throw new Error(`No Full package asset matching version ${args.version} in releases.win.json`);
+    throw new Error(`No Full package asset matching version ${args.version} in ${releasesJsonName}`);
   }
 
   const targetDeltaAsset = deltaAssets.find(
@@ -131,14 +134,14 @@ async function run() {
     appId: targetAsset.PackageId || 'SA-CHAOS',
     platform: 'win',
     arch: 'x64',
-    channel: 'win',
+    channel: args.channel,
     version: targetAsset.Version,
     chunkSize: DEFAULT_CHUNK_SIZE,
     signingKeyId: args.keyId,
     privateKeyPem
   });
 
-  // Self-verify against the official S3 releases.win.json entry before writing
+  // Self-verify against the official S3 releases.<channel>.json entry before writing
   if (fs.existsSync(args.publicKeyPath)) {
     const pubPem = fs.readFileSync(args.publicKeyPath, 'utf8');
     verifySignedP2PReleaseIndex({
@@ -151,8 +154,10 @@ async function run() {
     });
   }
 
-  const indexOutPath = path.join(args.releasesDir, 'p2p-index.win.json');
-  const sigOutPath = path.join(args.releasesDir, 'p2p-index.win.sig');
+  const indexFileName = `p2p-index.${args.channel}.json`;
+  const sigFileName = `p2p-index.${args.channel}.sig`;
+  const indexOutPath = path.join(args.releasesDir, indexFileName);
+  const sigOutPath = path.join(args.releasesDir, sigFileName);
 
   fs.writeFileSync(indexOutPath, JSON.stringify(signed.index, null, 2), 'utf8');
   fs.writeFileSync(sigOutPath, signed.signatureFileContent, 'utf8');
@@ -161,13 +166,13 @@ async function run() {
   console.log(`  - ${indexOutPath} (SHA256: ${signed.index.assets[0].sha256})`);
   console.log(`  - ${sigOutPath} (Key ID: ${args.keyId})`);
 
-  // Optional Step 1: Upload sidecar files to S3 alongside releases.win.json
+  // Optional Step 1: Upload sidecar files to S3 alongside releases.<channel>.json
   if (args.uploadS3) {
     try {
       const prefix = args.s3Prefix.endsWith('/') ? args.s3Prefix : `${args.s3Prefix}/`;
-      await uploadFileToS3(indexOutPath, `${prefix}p2p-index.win.json`, 'application/json');
-      await uploadFileToS3(sigOutPath, `${prefix}p2p-index.win.sig`, 'application/json');
-      console.log(`[P2P Publish] Uploaded p2p-index.win.json and p2p-index.win.sig to S3 (${prefix})`);
+      await uploadFileToS3(indexOutPath, `${prefix}${indexFileName}`, 'application/json');
+      await uploadFileToS3(sigOutPath, `${prefix}${sigFileName}`, 'application/json');
+      console.log(`[P2P Publish] Uploaded ${indexFileName} and ${sigFileName} to S3 (${prefix})`);
     } catch (s3Err) {
       console.warn(`[P2P Publish Warning] Failed to upload P2P sidecar to S3 (core release is unaffected): ${s3Err.message}`);
       if (!args.nonFatal) throw s3Err;
@@ -246,8 +251,8 @@ async function run() {
       }
 
       verifySteps.push(
-        `sudo mv -vf "${remoteTmpDir}/p2p-index.win.json" "${args.vpsReleasesDir}/p2p-index.win.json"`,
-        `sudo mv -vf "${remoteTmpDir}/p2p-index.win.sig" "${args.vpsReleasesDir}/p2p-index.win.sig"`,
+        `sudo mv -vf "${remoteTmpDir}/${indexFileName}" "${args.vpsReleasesDir}/${indexFileName}"`,
+        `sudo mv -vf "${remoteTmpDir}/${sigFileName}" "${args.vpsReleasesDir}/${sigFileName}"`,
         `sudo chown -R decentraupdate:decentraupdate "${args.vpsReleasesDir}" 2>/dev/null || true`,
         `sudo rm -rf "${remoteTmpDir}"`,
         `sudo -n systemctl restart decentraupdate-seeder.service 2>/dev/null || sudo -n systemctl reload-or-restart decentraupdate-seeder.service 2>/dev/null || pkill -HUP -f seeder-daemon.js 2>/dev/null || true`

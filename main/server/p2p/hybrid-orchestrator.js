@@ -327,6 +327,10 @@ export class HybridUpdateOrchestrator extends EventEmitter {
       this.p2pNode?.setBootstrapMultiaddrs(partialConfig.p2pBootstrapMultiaddrs);
     }
 
+    if (typeof partialConfig.channel === 'string' && partialConfig.channel) {
+      this.channel = partialConfig.channel.toLowerCase() === 'beta' ? 'beta' : 'win';
+    }
+
     // If user turned P2P OFF, immediately kill all P2P activity
     if (!this.config.p2pUpdaterEnabled) {
       this._effectiveSeeding = false;
@@ -452,34 +456,45 @@ export class HybridUpdateOrchestrator extends EventEmitter {
         (a) => String(a.Version || a.version).replace(/^v/i, '') === targetVersion && String(a.Type || a.type).toLowerCase() === 'full'
       ) || targetRelease;
 
-    // Hitung apakah client berada persis 1 versi sebelumnya (consecutive) untuk menentukan keamanan pemakaian Delta
-    const fullAssets = s3FeedAssets
-      .filter((a) => String(a.Type || a.type).toLowerCase() === 'full')
-      .sort((a, b) => compareSemver(b.Version || b.version, a.Version || a.version));
+    // Membaca s3FeedAssets dari urutan paling terbaru (atas) ke bawah
+    const fullAssets = s3FeedAssets.filter((a) => String(a.Type || a.type).toLowerCase() === 'full');
+    const deltaAssets = s3FeedAssets.filter((a) => String(a.Type || a.type).toLowerCase() === 'delta');
 
-    const targetIdx = fullAssets.findIndex((a) => String(a.Version || a.version).replace(/^v/i, '') === targetVersion);
-    const immediatePreviousVersion = (targetIdx !== -1 && fullAssets[targetIdx + 1])
-      ? String(fullAssets[targetIdx + 1].Version || fullAssets[targetIdx + 1].version).replace(/^v/i, '')
-      : null;
+    const clean = (v) => String(v || '').replace(/^v/i, '').trim();
+    const targetFull = fullAssets[0] || targetRelease;
+    const prev1Full = fullAssets[1]; // x-1
+    const prev2Full = fullAssets[2]; // x-2
 
     let currentVersion = '';
     try {
       const { app } = await import('electron');
-      currentVersion = typeof app !== 'undefined' && app.getVersion ? String(app.getVersion()).replace(/^v/i, '') : '';
+      currentVersion = typeof app !== 'undefined' && app.getVersion ? clean(app.getVersion()) : '';
     } catch (_) {}
 
-    const isDirectlyConsecutive = Boolean(immediatePreviousVersion && currentVersion && currentVersion === immediatePreviousVersion);
+    const deltaTarget = deltaAssets.find((d) => clean(d.Version || d.version) === clean(targetFull.Version || targetFull.version));
+    const deltaPrev1 = prev1Full ? deltaAssets.find((d) => clean(d.Version || d.version) === clean(prev1Full.Version || prev1Full.version)) : null;
 
-    const deltaS3Asset = isDirectlyConsecutive
-      ? s3FeedAssets.find(
-          (a) => String(a.Version || a.version).replace(/^v/i, '') === targetVersion && String(a.Type || a.type).toLowerCase() === 'delta'
-        )
-      : null;
+    let canUseDeltas = false;
+    let expectedDeltaBytes = 0;
+    let deltaS3Asset = null;
 
-    const s3ExpectedSize =
-      Number(fullS3Asset.Size || targetRelease.Size || 0) || 0;
-    const s3ExpectedDeltaSize =
-      Number((deltaS3Asset && deltaS3Asset.Size) || s3ExpectedSize) || s3ExpectedSize;
+    if (currentVersion && (!updateInfo || !updateInfo.isDowngrade)) {
+      if (prev1Full && currentVersion === clean(prev1Full.Version || prev1Full.version) && deltaTarget?.Size) {
+        canUseDeltas = true;
+        expectedDeltaBytes = Number(deltaTarget.Size);
+        deltaS3Asset = deltaTarget;
+      } else if (prev2Full && currentVersion === clean(prev2Full.Version || prev2Full.version) && deltaTarget?.Size && deltaPrev1?.Size) {
+        canUseDeltas = true;
+        expectedDeltaBytes = Number(deltaTarget.Size) + Number(deltaPrev1.Size);
+        deltaS3Asset = deltaTarget;
+      }
+    }
+
+    const fullSize = Number(fullS3Asset.Size || targetRelease.Size || 0) || 0;
+    const s3ExpectedSize = fullSize;
+    const s3ExpectedDeltaSize = canUseDeltas && expectedDeltaBytes > 0 && expectedDeltaBytes < fullSize
+      ? expectedDeltaBytes
+      : s3ExpectedSize;
 
     this.progress = {
       percent: 0,
@@ -565,7 +580,8 @@ export class HybridUpdateOrchestrator extends EventEmitter {
 
       // Determine whether Delta or Full package should be downloaded via P2P
       const canUseDelta = Boolean(
-        isDirectlyConsecutive &&
+        canUseDeltas &&
+        requiredDeltas.length === 1 &&
         verifiedSidecar.deltaAsset &&
         (!updateInfo || !updateInfo.isDowngrade)
       );

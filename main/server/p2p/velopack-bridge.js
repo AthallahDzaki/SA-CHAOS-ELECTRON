@@ -139,19 +139,11 @@ export class ExistingS3UpdaterAdapter {
     }
 
     const targetRelease = activeUpdateInfo.targetFullRelease;
-    const canUseDelta = Boolean(deltaAsset && (!activeUpdateInfo || !activeUpdateInfo.isDowngrade));
-    const assetToDownload = canUseDelta
-      ? {
-          ...targetRelease,
-          fileName: deltaAsset.FileName || deltaAsset.fileName,
-          FileName: deltaAsset.FileName || deltaAsset.fileName,
-          size: BigInt(deltaAsset.Size || deltaAsset.size || 0),
-          Size: deltaAsset.Size || deltaAsset.size,
-          sha1: deltaAsset.SHA1 || deltaAsset.sha1
-        }
-      : targetRelease;
 
-    await manager.downloadUpdatesAsync(assetToDownload, (progressPercent) => {
+    // PENTING: Jangan pernah mengubah targetRelease.fileName menjadi nama file delta.
+    // Velopack (Vfusion) secara native membaca targetRelease, mendownload delta berantai dari feed,
+    // merekonstruksi targetRelease full package di packages/, lalu menyiapkannya untuk apply.
+    await manager.downloadUpdatesAsync(targetRelease, (progressPercent) => {
       onProgress?.({
         percent: Number(progressPercent) || 0,
         targetRelease
@@ -161,7 +153,7 @@ export class ExistingS3UpdaterAdapter {
     return {
       manager,
       updateInfo: activeUpdateInfo,
-      targetRelease: assetToDownload
+      targetRelease
     };
   }
 
@@ -341,24 +333,16 @@ export class VelopackLocalSourceAdapter {
       );
     }
 
-    const toDownload = isDelta ? {
-      ...localTarget,
-      fileName: verifiedRecord.filename,
-      FileName: verifiedRecord.filename,
-      size: BigInt(verifiedRecord.size || 0),
-      Size: verifiedRecord.size,
-      sha1: verifiedRecord.sha1 || '',
-      SHA1: verifiedRecord.sha1 || ''
-    } : localTarget;
-
-    await localManager.downloadUpdatesAsync(toDownload, (pct) => {
+    // localTarget adalah targetFullRelease dari localFeedDir.
+    // Velopack akan menerapkan delta yang sudah disiapkan di local feed ke base package lokal.
+    await localManager.downloadUpdatesAsync(localTarget, (pct) => {
       onProgress?.(Number(pct) || 0);
     });
 
     return {
       localManager,
       localUpdateInfo,
-      localTargetRelease: toDownload,
+      localTargetRelease: localTarget,
       localFeedDir: feedInfo.localFeedDir
     };
   }
